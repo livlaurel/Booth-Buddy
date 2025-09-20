@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [resetMessage, setResetMessage] = useState("");
     const [error, setError] = useState("");
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -18,6 +20,19 @@ export default function LoginPage() {
         } catch (err: any) {
         setError(err.message);
         }
+    };
+    const handleForgotPassword = async () => {
+      if (!email) {
+        setError("Please enter your email first.");
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        setResetMessage("Password reset email sent! Check your inbox.");
+      } catch (err: any) {
+        setError(err.message);
+      }
     };
     return (
         <div className="flex items-center justify-center min-h-screen bg-black">
@@ -49,8 +64,17 @@ export default function LoginPage() {
                     />
                 </div>
 
+                {/* Forgot Password Link */}
+                <p
+                  onClick={handleForgotPassword}
+                  className="text-sm text-blue-600 hover:underline cursor-pointer text-right"
+                >
+                  Forgot Password?
+                </p>
+
                 {/* Error Message */}
                 {error && <p className="text-red-500 text-sm">{error}</p>}
+                {resetMessage && <p className="text-black text-sm">{resetMessage}</p>}
 
                 {/* Login Button */}
                 <button
