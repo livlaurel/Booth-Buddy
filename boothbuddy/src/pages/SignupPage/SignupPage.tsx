@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { errorMessage } from "../../utils/errorMessages";
+import { getPasswordChecklist, isPasswordValid } from "../../utils/validators";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -16,6 +17,11 @@ export default function SignupPage() {
 
     if (!email || !username || !password) {
       setError("All fields are required.");
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      setError("Password does not meet the required criteria.");
       return;
     }
 
@@ -73,6 +79,25 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {password && (
+              <ul className="mt-2 text-sm">
+                <li className={getPasswordChecklist(password).length ? "text-green-600" : "text-red-500"}>
+                  {getPasswordChecklist(password).length ? "✓" : "✗"} Between 6–8 characters
+                </li>
+                <li className={getPasswordChecklist(password).number ? "text-green-600" : "text-red-500"}>
+                  {getPasswordChecklist(password).number ? "✓" : "✗"} Contains a number
+                </li>
+                <li className={getPasswordChecklist(password).uppercase ? "text-green-600" : "text-red-500"}>
+                  {getPasswordChecklist(password).uppercase ? "✓" : "✗"} Contains an uppercase letter
+                </li>
+                <li className={getPasswordChecklist(password).lowercase ? "text-green-600" : "text-red-500"}>
+                  {getPasswordChecklist(password).lowercase ? "✓" : "✗"} Contains a lowercase letter
+                </li>
+                <li className={getPasswordChecklist(password).special ? "text-green-600" : "text-red-500"}>
+                  {getPasswordChecklist(password).special ? "✓" : "✗"} Contains a special character
+                </li>
+              </ul>
+            )}
           </div>
 
           {/* Error message */}
