@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
+import { errorMessage } from "../../utils/errorMessages";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -18,7 +19,8 @@ export default function LoginPage() {
 
           alert(`Welcome back, ${user.displayName || user.email}!`);
         } catch (err: any) {
-        setError(err.message);
+          console.error(err)
+        setError(errorMessage(err.code));
         }
     };
     const handleForgotPassword = async () => {
@@ -31,7 +33,7 @@ export default function LoginPage() {
         await sendPasswordResetEmail(auth, email);
         setResetMessage("Password reset email sent! Check your inbox.");
       } catch (err: any) {
-        setError(err.message);
+        setError(errorMessage(err.code));
       }
     };
     return (
