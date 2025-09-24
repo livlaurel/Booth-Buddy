@@ -13,6 +13,13 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email || !username || !password) {
+      setError("All fields are required.");
+      return;
+    }
+
+
     try {
       // 1. Create user with email + password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -74,7 +81,12 @@ export default function SignupPage() {
           {/* Signup Button */}
           <button
             type="submit"
-            className="w-full py-2 bg-black text-white rounded-md hover:bg-gray-800 transition"
+            disabled={!email || !username || !password}
+            className={`w-full py-2 rounded-md transition ${
+              !email || !username || !password
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-black text-white hover:bg-gray-800"
+              }`}
           >
             Sign Up
           </button>
