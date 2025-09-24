@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
+import { errorMessage } from "../../utils/errorMessages";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ export default function SignupPage() {
 
       navigate("/login"); 
     } catch (err: any) {
-      setError(err.message);
+      setError(errorMessage(err.code));
     }
   };
 
