@@ -1,13 +1,11 @@
-import Header from "./components/header"
-import Footer from "./components/footer"
+import Home from "./pages/home.tsx"
 import './App.css'
 
 function App() {
   return (
     <>
       <div>
-        <Header />
-        <Footer />
+        <Home />
       </div>
     </>
   )
