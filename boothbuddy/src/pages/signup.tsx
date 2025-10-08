@@ -9,7 +9,7 @@ function Login() {
         <main className="flex-grow flex justify-center items-center">
           <div className="flex flex-col items-center space-y-4">
             <h1 className="text-3xl font-black text-black">
-              Login
+              Sign Up
             </h1>
           </div>
         </main>
