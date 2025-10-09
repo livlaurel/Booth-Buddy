@@ -10,11 +10,11 @@ function Home() {
         <main className="flex-grow flex justify-center items-center">
           <div className="relative">
             <img src={Booth} alt="logo" className="fixed top-8 inset-x-0 mx-auto w-190 h-165" />
-            <div className="fixed top-107 left-80 inset-x-0 flex flex-row items-center justify-center space-x-4">
-              <a href="/#/login" className="text-white bg-black px-4 py-2 rounded hover:bg-gray-800">
+            <div className="fixed top-107 left-78 inset-x-0 flex flex-row items-center justify-center space-x-4">
+              <a href="/#/login" className="text-white bg-[#e15c31] px-4 py-2 rounded-lg hover:bg-[#ff9573]">
                 Login
               </a>
-              <a href="/#/signup" className="text-white bg-black px-4 py-2 rounded hover:bg-gray-800">
+              <a href="/#/signup" className="text-white bg-[#e15c31] px-4 py-2 rounded-lg hover:bg-[#ff9573]">
                 SignUp
               </a>
             </div>
