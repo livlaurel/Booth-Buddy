@@ -44,7 +44,7 @@ Frontend (React/TypeScript + Tailwind) → Backend (Flask) → Database (Firebas
 
 ### 2. Install frontend dependencies and start:
 
-    cd frontend
+    cd boothbuddy
     npm install
     npm start
 
