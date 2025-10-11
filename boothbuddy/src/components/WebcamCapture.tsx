@@ -3,9 +3,11 @@ import { useRef, useState, useEffect } from "react";
 function WebcamCapture() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
-  // Start the webcam
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
+  const [stripImage, setStripImage] = useState<string | null>(null);
+
+  // Start webcam
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -29,9 +31,10 @@ function WebcamCapture() {
     };
   }, []);
 
-  // Capture image
+  // Capture a photo
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
+    if (capturedImages.length >= 4) return;
 
     const width = videoRef.current.videoWidth;
     const height = videoRef.current.videoHeight;
@@ -43,43 +46,54 @@ function WebcamCapture() {
     if (ctx) {
       ctx.drawImage(videoRef.current, 0, 0, width, height);
       const dataUrl = canvasRef.current.toDataURL("image/png");
-      setCapturedImage(dataUrl);
+
+      setCapturedImages((prev) => [...prev, dataUrl]);
     }
   };
 
-  // Download image
-  const downloadImage = () => {
-    if (!capturedImage) return;
+  const resetPhotos = () => {
+    setCapturedImages([]);
+    setStripImage(null);
+  };
+
+  const createStrip = () => {
+    if (capturedImages.length === 4) {
+      // Simulate creating a strip (replace with backend call later)
+      alert("Strip created (simulated). Replace with backend integration.");
+      setStripImage(capturedImages[0]); // Placeholder
+    }
+  };
+
+  const downloadStrip = () => {
+    if (!stripImage) return;
 
     const link = document.createElement("a");
-    link.href = capturedImage;
-    link.download = "boothbuddy_photo.png";
+    link.href = stripImage;
+    link.download = "boothbuddy_strip.png";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Share image (Web Share API)
-  const shareImage = async () => {
-    if (!capturedImage) return;
+  const shareStrip = async () => {
+    if (!stripImage) return;
 
-    if (navigator.canShare && navigator.canShare({ files: [] })) {
-      try {
-        const res = await fetch(capturedImage);
-        const blob = await res.blob();
-        const file = new File([blob], "boothbuddy_photo.png", { type: blob.type });
+    try {
+      const res = await fetch(stripImage);
+      const blob = await res.blob();
+      const file = new File([blob], "boothbuddy_strip.png", { type: blob.type });
 
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
+          title: "My BoothBuddy Strip",
+          text: "Check out my photo strip!",
           files: [file],
-          title: "BoothBuddy Photo",
-          text: "Check out my photo from BoothBuddy!",
         });
-        console.log("Shared successfully");
-      } catch (err) {
-        console.error("Sharing failed:", err);
+      } else {
+        alert("Sharing not supported. Please download instead.");
       }
-    } else {
-      alert("Sharing not supported on this browser. Please download instead.");
+    } catch (err) {
+      console.error("Share failed:", err);
     }
   };
 
@@ -91,36 +105,70 @@ function WebcamCapture() {
         playsInline
         className="rounded shadow-md w-full max-w-md"
       />
+
       <button
         onClick={capturePhoto}
-        className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
+        disabled={capturedImages.length >= 4}
+        className={`${
+          capturedImages.length >= 4 ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
+        } text-white px-4 py-2 rounded`}
       >
-        Capture Photo
+        {capturedImages.length < 4
+          ? `Capture Photo (${capturedImages.length}/4)`
+          : "Max Reached"}
       </button>
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {capturedImage && (
-        <div className="mt-4 flex flex-col items-center space-y-2">
+      {capturedImages.length > 0 && (
+        <div className="mt-4 flex flex-wrap justify-center gap-4">
+          {capturedImages.map((img, idx) => (
+            <img
+              key={idx}
+              src={img}
+              alt={`Capture ${idx + 1}`}
+              className="w-32 h-auto rounded shadow"
+            />
+          ))}
+        </div>
+      )}
+
+      {capturedImages.length === 4 && (
+        <div className="mt-4 flex gap-4">
+          <button
+            onClick={createStrip}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Create Strip
+          </button>
+          <button
+            onClick={resetPhotos}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Reset
+          </button>
+        </div>
+      )}
+
+      {stripImage && (
+        <div className="mt-6 flex flex-col items-center space-y-4">
           <img
-            src={capturedImage}
-            alt="Captured"
+            src={stripImage}
+            alt="Photo Strip"
             className="rounded shadow-md w-full max-w-md"
           />
-
-          <div className="mt-4 flex space-x-4">
+          <div className="flex gap-4">
             <button
-              onClick={downloadImage}
+              onClick={downloadStrip}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
-              Download
+              Download Strip
             </button>
-
             <button
-              onClick={shareImage}
+              onClick={shareStrip}
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             >
-              Share
+              Share Strip
             </button>
           </div>
         </div>
