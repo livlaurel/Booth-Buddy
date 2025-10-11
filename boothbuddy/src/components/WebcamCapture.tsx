@@ -3,9 +3,8 @@ import { useRef, useState, useEffect } from "react";
 function WebcamCapture() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
-  const [stripImage, setStripImage] = useState<string | null>(null);
+  const [stripPreviewUrl, setStripPreviewUrl] = useState<string | null>(null);
 
   // Start webcam
   useEffect(() => {
@@ -17,6 +16,7 @@ function WebcamCapture() {
         }
       } catch (err) {
         console.error("Error accessing webcam:", err);
+        alert("Error accessing webcam. Please make sure no other app is using it.");
       }
     };
 
@@ -51,71 +51,113 @@ function WebcamCapture() {
     }
   };
 
+  // Reset captured images and preview
   const resetPhotos = () => {
     setCapturedImages([]);
-    setStripImage(null);
+    setStripPreviewUrl(null);
   };
 
-  const createStrip = () => {
-    if (capturedImages.length === 4) {
-      // Simulate creating a strip (replace with backend call later)
-      alert("Strip created (simulated). Replace with backend integration.");
-      setStripImage(capturedImages[0]); // Placeholder
+  // Send images to backend to create photo strip
+  const createStrip = async () => {
+    if (capturedImages.length !== 4) {
+      alert("Please capture exactly 4 photos to create a strip.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/v1/strips/compose", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          frames: capturedImages,
+          frameWidth: 320, // You can adjust this or make it dynamic
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "Failed to create strip");
+      }
+
+      const data = await response.json();
+      setStripPreviewUrl(`http://localhost:5000${data.previewUrl}`);
+      alert("Strip created! Preview below.");
+
+    } catch (error: any) {
+      console.error("Error creating strip:", error);
+      alert(`Error creating strip: ${error.message}`);
     }
   };
 
-  const downloadStrip = () => {
-    if (!stripImage) return;
+  // Download strip image
+  const downloadStrip = async () => {
+  if (!stripPreviewUrl) return;
+
+  try {
+    const response = await fetch(stripPreviewUrl);
+    if (!response.ok) throw new Error("Failed to fetch image");
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
 
     const link = document.createElement("a");
-    link.href = stripImage;
-    link.download = "boothbuddy_strip.png";
+    link.href = url;
+    link.download = "photostrip.png";
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
-  };
 
+    // Cleanup
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download failed:", error);
+  }
+};
+
+
+  // Share strip image (basic example using navigator.share)
   const shareStrip = async () => {
-    if (!stripImage) return;
+    if (!stripPreviewUrl) return;
 
-    try {
-      const res = await fetch(stripImage);
-      const blob = await res.blob();
-      const file = new File([blob], "boothbuddy_strip.png", { type: blob.type });
+    if (navigator.share) {
+      try {
+        const response = await fetch(stripPreviewUrl);
+        const blob = await response.blob();
+        const file = new File([blob], "photostrip.png", { type: "image/png" });
 
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
-          title: "My BoothBuddy Strip",
-          text: "Check out my photo strip!",
           files: [file],
+          title: "My Photo Strip",
+          text: "Check out my photo strip from BoothBuddy!",
         });
-      } else {
-        alert("Sharing not supported. Please download instead.");
+      } catch (error) {
+        alert("Sharing failed: " + error);
       }
-    } catch (err) {
-      console.error("Share failed:", err);
+    } else {
+      alert("Sharing not supported on this browser.");
     }
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-center space-y-4 p-4">
       <video
         ref={videoRef}
         autoPlay
         playsInline
         className="rounded shadow-md w-full max-w-md"
       />
-
       <button
         onClick={capturePhoto}
         disabled={capturedImages.length >= 4}
         className={`${
-          capturedImages.length >= 4 ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
-        } text-white px-4 py-2 rounded`}
+          capturedImages.length >= 4 ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
+        } text-white px-4 py-2 rounded transition`}
       >
         {capturedImages.length < 4
           ? `Capture Photo (${capturedImages.length}/4)`
-          : "Max Reached"}
+          : "Max Photos Captured"}
       </button>
 
       <canvas ref={canvasRef} className="hidden" />
@@ -150,25 +192,22 @@ function WebcamCapture() {
         </div>
       )}
 
-      {stripImage && (
+      {stripPreviewUrl && (
         <div className="mt-6 flex flex-col items-center space-y-4">
-          <img
-            src={stripImage}
-            alt="Photo Strip"
-            className="rounded shadow-md w-full max-w-md"
-          />
-          <div className="flex gap-4">
+          <h2 className="text-xl font-semibold">Photo Strip Preview:</h2>
+          <img src={stripPreviewUrl} alt="Photo Strip Preview" className="rounded shadow-md max-w-md" />
+          <div className="flex space-x-4 mt-2">
             <button
               onClick={downloadStrip}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              Download Strip
+              Download
             </button>
             <button
               onClick={shareStrip}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
             >
-              Share Strip
+              Share
             </button>
           </div>
         </div>
