@@ -3,9 +3,9 @@ import { useRef, useState, useEffect } from "react";
 function WebcamCapture() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [captured, setCaptured] = useState<string | null>(null);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
-  // Start webcam
+  // Start the webcam
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -20,7 +20,6 @@ function WebcamCapture() {
 
     startCamera();
 
-    // Cleanup on unmount
     return () => {
       if (videoRef.current?.srcObject) {
         (videoRef.current.srcObject as MediaStream)
@@ -30,7 +29,7 @@ function WebcamCapture() {
     };
   }, []);
 
-  // Capture image from video
+  // Capture image
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
 
@@ -44,13 +43,54 @@ function WebcamCapture() {
     if (ctx) {
       ctx.drawImage(videoRef.current, 0, 0, width, height);
       const dataUrl = canvasRef.current.toDataURL("image/png");
-      setCaptured(dataUrl);
+      setCapturedImage(dataUrl);
+    }
+  };
+
+  // Download image
+  const downloadImage = () => {
+    if (!capturedImage) return;
+
+    const link = document.createElement("a");
+    link.href = capturedImage;
+    link.download = "boothbuddy_photo.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Share image (Web Share API)
+  const shareImage = async () => {
+    if (!capturedImage) return;
+
+    if (navigator.canShare && navigator.canShare({ files: [] })) {
+      try {
+        const res = await fetch(capturedImage);
+        const blob = await res.blob();
+        const file = new File([blob], "boothbuddy_photo.png", { type: blob.type });
+
+        await navigator.share({
+          files: [file],
+          title: "BoothBuddy Photo",
+          text: "Check out my photo from BoothBuddy!",
+        });
+        console.log("Shared successfully");
+      } catch (err) {
+        console.error("Sharing failed:", err);
+      }
+    } else {
+      alert("Sharing not supported on this browser. Please download instead.");
     }
   };
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      <video ref={videoRef} autoPlay playsInline className="rounded shadow-md w-full max-w-md" />
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className="rounded shadow-md w-full max-w-md"
+      />
       <button
         onClick={capturePhoto}
         className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
@@ -60,10 +100,29 @@ function WebcamCapture() {
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {captured && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">Captured Photo:</h2>
-          <img src={captured} alt="Captured" className="rounded shadow-md w-full max-w-md" />
+      {capturedImage && (
+        <div className="mt-4 flex flex-col items-center space-y-2">
+          <img
+            src={capturedImage}
+            alt="Captured"
+            className="rounded shadow-md w-full max-w-md"
+          />
+
+          <div className="mt-4 flex space-x-4">
+            <button
+              onClick={downloadImage}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Download
+            </button>
+
+            <button
+              onClick={shareImage}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Share
+            </button>
+          </div>
         </div>
       )}
     </div>
