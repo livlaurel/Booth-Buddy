@@ -1,13 +1,20 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Header from "../components/header";
 import Footer from "../components/footer";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate("/booth"); 
   };
 
   return (
@@ -17,7 +24,7 @@ function Login() {
         <main className="flex-grow flex justify-center items-center">
           <div className="fixed flex flex-col items-center space-y-6 bg-white p-8 rounded-lg border-4 border-[#e15c31]">
             <h1 className="text-3xl font-black text-black">Login</h1>
-            <form className="flex flex-col space-y-4 w-80">
+            <form className="flex flex-col space-y-4 w-80" onSubmit={handleLogin}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email
