@@ -15,7 +15,7 @@ function Login() {
       <div className="flex flex-col min-h-screen overflow-hidden">
         <Header />
         <main className="flex-grow flex justify-center items-center">
-          <div className="fixed flex flex-col items-center space-y-6 bg-white p-8 rounded-lg shadow-md">
+          <div className="fixed flex flex-col items-center space-y-6 bg-white p-8 rounded-lg border-4 border-[#e15c31]">
             <h1 className="text-3xl font-black text-black">Login</h1>
             <form className="flex flex-col space-y-4 w-80">
               <div>
@@ -46,7 +46,7 @@ function Login() {
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                  className="absolute inset-y-11 right-3 flex items-center text-gray-500 hover:text-gray-700"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
