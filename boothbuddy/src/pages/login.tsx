@@ -12,10 +12,10 @@ function Login() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen overflow-hidden">
         <Header />
         <main className="flex-grow flex justify-center items-center">
-          <div className="flex flex-col items-center space-y-6 bg-white p-8 rounded-lg shadow-md">
+          <div className="fixed flex flex-col items-center space-y-6 bg-white p-8 rounded-lg shadow-md">
             <h1 className="text-3xl font-black text-black">Login</h1>
             <form className="flex flex-col space-y-4 w-80">
               <div>
@@ -58,15 +58,10 @@ function Login() {
                 Login
               </button>
             </form>
-            <div className="flex flex-col items-center space-y-2">
-              <a href="/#/forgot-password" className="text-sm text-[#e15c31] hover:underline">
-                Forgot Password?
-              </a>
-              <a href="/#/forgot-email" className="text-sm text-[#e15c31] hover:underline">
-                Forgot Email?
-              </a>
+            <div className="flex flex-row items-center space-x-2">
+              <p className="text-sm text-gray-700">Don't have an account?</p>
               <a href="/#/signup" className="text-sm text-gray-700 hover:underline">
-                Don't have an account? Sign Up
+                Sign Up
               </a>
             </div>
           </div>
