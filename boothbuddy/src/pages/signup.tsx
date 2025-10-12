@@ -68,7 +68,7 @@ function Signup() {
                   Name
                 </label>
                 <input
-                  type="name"
+                  type="text"
                   id="name"
                   name="name"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#e15c31] focus:border-[#e15c31]"
