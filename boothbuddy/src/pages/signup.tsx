@@ -8,9 +8,34 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [passwordRequirementsError, setPasswordRequirementsError] = useState("");
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const validatePassword = (value: string) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{12,})/;
+    if (!passwordRegex.test(value)) {
+      setPasswordRequirementsError(
+        "Password must be at least 12 characters long, include 1 capital letter, and 1 special character."
+      );
+    } else {
+      setPasswordRequirementsError("");
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    validatePassword(value);
+
+    // Reset confirm password error if passwords match
+    if (value === confirmPassword) {
+      setPasswordError("");
+    } else {
+      setPasswordError("Passwords do not match");
+    }
   };
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +49,11 @@ function Signup() {
     }
   };
 
-  const isFormValid = password && confirmPassword && !passwordError;
+  const isFormValid =
+    password &&
+    confirmPassword &&
+    !passwordError &&
+    !passwordRequirementsError;
 
   return (
     <>
@@ -69,8 +98,10 @@ function Signup() {
                   id="password"
                   name="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#e15c31] focus:border-[#e15c31]"
+                  onChange={handlePasswordChange}
+                  className={`mt-1 block w-full px-3 py-2 border ${
+                    passwordRequirementsError ? "border-red-500" : "border-gray-300"
+                  } rounded-md shadow-sm focus:outline-none focus:ring-[#e15c31] focus:border-[#e15c31]`}
                   placeholder="Enter your password"
                   required
                 />
@@ -81,6 +112,9 @@ function Signup() {
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
+                {passwordRequirementsError && (
+                  <p className="text-sm text-red-500 mt-1">{passwordRequirementsError}</p>
+                )}
               </div>
               <div className="relative">
                 <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
