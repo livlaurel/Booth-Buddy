@@ -1,25 +1,26 @@
-import Home from "./pages/home.tsx"
-import Login from "./pages/login.tsx"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage/LandingPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import SignupPage from "./pages/SignupPage/SignupPage";
 import Download from "./pages/download.tsx"
 import Booth from "./pages/photobooth.tsx"
-import Signup from "./pages/signup.tsx"
 import Profile from "./pages/proflie.tsx"
-import { HashRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 
 function App() {
   return (
-    <HashRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/booth" element={<Booth />} />
         <Route path="/download" element={<Download />} />
-        <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile/>}/>
       </Routes>
-    </HashRouter>
-  )
+    </Router>
+  );
+
 }
 
-export default App
+export default App;
