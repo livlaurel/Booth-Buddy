@@ -2,3 +2,8 @@
 .DS_Store
 backend/tmp/
 *.png
+
+# macOS
+.DS_Store
+# local env
+boothbuddy/.env
