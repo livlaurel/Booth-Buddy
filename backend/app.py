@@ -15,7 +15,9 @@ def create_app():
         return jsonify(status="ok", version="0.1.0")
 
     from api.v1.strips import bp as strips_bp
+    from api.v1.filters import bp as filters_bp
     app.register_blueprint(strips_bp)
+    app.register_blueprint(filters_bp)
 
     @app.errorhandler(HTTPException)
     def http_err(e):
