@@ -65,7 +65,7 @@ function WebcamCapture() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/v1/strips/compose", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/strips/compose`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +82,7 @@ function WebcamCapture() {
       }
 
       const data = await response.json();
-      setStripPreviewUrl(`http://localhost:5000${data.previewUrl}`);
+      setStripPreviewUrl(`${import.meta.env.VITE_API_URL}${data.previewUrl}`);
       alert("Strip created! Preview below.");
 
     } catch (error: any) {
