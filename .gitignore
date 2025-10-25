@@ -7,3 +7,6 @@ backend/tmp/
 .DS_Store
 # local env
 boothbuddy/.env
+
+# ignore local venv
+backend/venv/
