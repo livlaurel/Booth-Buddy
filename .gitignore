@@ -1,0 +1,12 @@
+
+.DS_Store
+backend/tmp/
+*.png
+
+# macOS
+.DS_Store
+# local env
+boothbuddy/.env
+
+# ignore local venv
+backend/venv/
