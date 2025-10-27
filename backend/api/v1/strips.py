@@ -1,32 +1,30 @@
 import os, uuid
-from pathlib import Path
-from flask import Blueprint, request, jsonify, send_file
-from PIL import Image
+from flask import Blueprint, request, jsonify, send_file, abort
 from services.compose import compose_vertical_strip
 
 bp = Blueprint("strips", __name__, url_prefix="/api/v1/strips")
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+TMP_DIR = os.path.abspath(os.environ.get("TMP_DIR", os.path.join(BASE_DIR, "backend", "tmp")))
+os.makedirs(TMP_DIR, exist_ok=True)
+
 @bp.post("/compose")
 def compose():
-    data = request.get_json(silent=True) or {}
-    frames = data.get("frames") or []
+    data = request.get_json(force=True) or {}
+    frames = data.get("frames")
     frame_width = data.get("frameWidth")
-    try:
-        img: Image.Image = compose_vertical_strip(frames, frame_width=frame_width)
-    except Exception as e:
-        return jsonify(error={"code": "bad_request", "message": str(e)}), 400
-
-    strip_id = str(uuid.uuid4())
-    tmp_dir = Path(os.getenv("STRIP_TMP_DIR", "./tmp"))
-    tmp_dir.mkdir(parents=True, exist_ok=True)
-    out_path = tmp_dir / f"{strip_id}.png"
-    img.save(out_path, "PNG")
-
-    return jsonify(stripId=strip_id, previewUrl=f"/api/v1/strips/preview/{strip_id}")
+    padding = data.get("padding", 16)
+    if not isinstance(frames, list) or len(frames) != 4:
+        return jsonify(error={"code": "bad_request", "message": "Exactly 4 frames are required"}), 400
+    img = compose_vertical_strip(frames, frame_width=frame_width, padding=padding)
+    sid = str(uuid.uuid4())
+    out_path = os.path.join(TMP_DIR, f"{sid}.png")
+    img.save(out_path, format="PNG", optimize=True)
+    return jsonify(stripId=sid, previewUrl=f"/api/v1/strips/preview/{sid}")
 
 @bp.get("/preview/<strip_id>")
-def preview(strip_id: str):
-    path = Path(os.getenv("STRIP_TMP_DIR", "./tmp")) / f"{strip_id}.png"
-    if not path.exists():
-        return jsonify(error={"code": "not_found", "message": "strip not found"}), 404
-    return send_file(path, mimetype="image/png")
+def preview(strip_id):
+    fn = os.path.join(TMP_DIR, f"{strip_id}.png")
+    if not os.path.isfile(fn):
+        abort(404)
+    return send_file(fn, mimetype="image/png", as_attachment=False, max_age=0)
