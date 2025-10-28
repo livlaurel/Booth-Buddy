@@ -12,6 +12,9 @@ interface Filter {
 function WebcamCapture() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [countdown, setCountdown] = useState<number | null>(null); // For countdown display
+  const [isCapturing, setIsCapturing] = useState(false); // To disable buttons during capture
+  const [flash, setFlash] = useState(false); // For camera flash effect
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [stripPreviewUrl, setStripPreviewUrl] = useState<string | null>(null);
   
@@ -55,13 +58,36 @@ function WebcamCapture() {
   }, []);
 
   // Capture a photo
-  const capturePhoto = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    if (capturedImages.length >= 4) return;
+  const capturePhotoSequence = async () => {
+  if (!videoRef.current || !canvasRef.current) return;
 
+  // Reset previous photos
+  setCapturedImages([]);
+  setStripPreviewUrl(null);
+  setSelectedFilter("none");
+
+  setIsCapturing(true);
+
+  const numPhotos = 4;
+  const countdownSeconds = 3;
+
+  for (let i = 0; i < numPhotos; i++) {
+    // Countdown
+    for (let sec = countdownSeconds; sec > 0; sec--) {
+      setCountdown(sec);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    setCountdown(null);
+
+    // Flash effect
+    setFlash(true);
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    setFlash(false);
+
+    // Capture photo
     const width = videoRef.current.videoWidth;
     const height = videoRef.current.videoHeight;
-
     canvasRef.current.width = width;
     canvasRef.current.height = height;
 
@@ -69,10 +95,13 @@ function WebcamCapture() {
     if (ctx) {
       ctx.drawImage(videoRef.current, 0, 0, width, height);
       const dataUrl = canvasRef.current.toDataURL("image/png");
-
       setCapturedImages((prev) => [...prev, dataUrl]);
     }
-  };
+  }
+
+  setIsCapturing(false);
+};
+
 
   // Reset captured images and preview
   const resetPhotos = () => {
@@ -198,23 +227,32 @@ function WebcamCapture() {
   const selectedFilterData = filters.find(f => f.id === selectedFilter);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4">
+    <div className="relative flex flex-col items-center space-y-4 p-4">
       <video
         ref={videoRef}
         autoPlay
         playsInline
         className="rounded shadow-md w-full max-w-md"
       />
+      {countdown !== null && (
+  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                  text-6xl font-bold text-white bg-black bg-opacity-50 rounded-full 
+                  w-32 h-32 flex items-center justify-center">
+    {countdown}
+  </div>
+)}
+{flash && (
+  <div className="absolute inset-0 bg-white opacity-75 pointer-events-none"></div>
+)}
+
       <button
-        onClick={capturePhoto}
-        disabled={capturedImages.length >= 4}
-        className={`${
-          capturedImages.length >= 4 ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
-        } text-white px-4 py-2 rounded transition`}
-      >
-        {capturedImages.length < 4
-          ? `Capture Photo (${capturedImages.length}/4)`
-          : "Max Photos Captured"}
+        onClick={capturePhotoSequence}
+  disabled={isCapturing}
+  className={`${
+    isCapturing ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
+  } text-white px-4 py-2 rounded transition`}
+>
+  {isCapturing ? "Capturing..." : "Capture 4 Photos"}
       </button>
 
       <canvas ref={canvasRef} className="hidden" />
