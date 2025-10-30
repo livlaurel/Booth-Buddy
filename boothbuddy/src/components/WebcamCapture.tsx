@@ -178,23 +178,34 @@ function WebcamCapture() {
   };
 
 
-  // Save strip to Supabase Storage
+  // Save strip to Supabase Storage with Firebase user ID
   const saveToGallery = async () => {
     if (!stripPreviewUrl) {
       alert("No strip to save");
       return;
     }
 
-    const stripId = stripPreviewUrl.split("/").pop()?.split(".")[0];
-    if (!stripId) return;
-
     try {
+      // Import auth from Firebase config
+      const { auth } = await import("../firebaseConfig");
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        alert("Please log in to save strips");
+        return;
+      }
+
+      const stripId = stripPreviewUrl.split("/").pop()?.split(".")[0];
+      if (!stripId) return;
+
+      const userId = currentUser.uid;
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/storage/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           strip_id: stripId,
-          user_id: "guest"
+          user_id: userId
         })
       });
 
