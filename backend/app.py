@@ -44,3 +44,5 @@ app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=True)
+from api.v1.storage import bp as storage_bp
+app.register_blueprint(storage_bp)

@@ -177,38 +177,6 @@ function WebcamCapture() {
     }
   };
 
-
-  // Save strip to Supabase Storage
-  const saveToGallery = async () => {
-    if (!stripPreviewUrl) {
-      alert("No strip to save");
-      return;
-    }
-
-    const stripId = stripPreviewUrl.split("/").pop()?.split(".")[0];
-    if (!stripId) return;
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/storage/upload`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          strip_id: stripId,
-          user_id: "guest"
-        })
-      });
-
-      if (!response.ok) throw new Error("Failed to save");
-
-      const data = await response.json();
-      console.log("✅ Saved to gallery:", data);
-      alert("✅ Strip saved to your gallery!");
-    } catch (error: any) {
-      console.error("Save failed:", error);
-      alert(`Failed to save: ${error.message}`);
-    }
-  };
-
   // Download strip image
   const downloadStrip = async () => {
     if (!stripPreviewUrl) return;
@@ -389,12 +357,6 @@ function WebcamCapture() {
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Download
-            </button>
-            <button
-              onClick={saveToGallery}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Save to Gallery
             </button>
             <button
               onClick={shareStrip}

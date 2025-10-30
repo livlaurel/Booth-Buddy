@@ -5,7 +5,7 @@ from services.compose import compose_vertical_strip
 bp = Blueprint("strips", __name__, url_prefix="/api/v1/strips")
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-TMP_DIR = os.path.abspath(os.environ.get("TMP_DIR", os.path.join(BASE_DIR, "backend", "tmp")))
+TMP_DIR = os.path.abspath(os.environ.get("TMP_DIR", os.path.join(BASE_DIR, "tmp")))
 os.makedirs(TMP_DIR, exist_ok=True)
 
 @bp.post("/compose")
