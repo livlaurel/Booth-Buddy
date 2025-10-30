@@ -1,4 +1,6 @@
 import { useRef, useState, useEffect } from "react";
+import { auth } from "../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface Filter {
   id: string;
@@ -17,6 +19,14 @@ function WebcamCapture() {
   const [flash, setFlash] = useState(false); // For camera flash effect
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [stripPreviewUrl, setStripPreviewUrl] = useState<string | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsGuest(user ? user.isAnonymous : false);
+    });
+    return () => unsubscribe();
+  }, []);
   
   // Filter states
   const [filters, setFilters] = useState<Filter[]>([]);
@@ -350,21 +360,36 @@ function WebcamCapture() {
       {stripPreviewUrl && (
         <div className="mt-6 flex flex-col items-center space-y-4">
           <h2 className="text-xl font-semibold">Photo Strip Preview:</h2>
-          <img src={stripPreviewUrl} alt="Photo Strip Preview" className="rounded shadow-md max-w-md" />
-          <div className="flex space-x-4 mt-2">
-            <button
-              onClick={downloadStrip}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              Download
-            </button>
-            <button
-              onClick={shareStrip}
-              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-            >
-              Share
-            </button>
+          <div className="relative">
+            <img
+              src={stripPreviewUrl}
+              alt="Photo Strip Preview"
+              className={`rounded shadow-md max-w-md transition duration-500 ${isGuest ? "blur-sm brightness-90" : ""}`}
+            />
+            {isGuest && (
+              <p className="absolute inset-x-0 top-10 text-center justify-center text-white text-lg font-semibold drop-shadow-md">
+                Please <a href="/signup" className="text-lg text-blue-600 font-semibold hover:underline cursor-pointer" >sign up</a> to preview or download your strip.
+              </p>
+            )}
           </div>
+   
+
+          {!isGuest && (
+            <div className="flex space-x-4 mt-2">
+              <button
+                onClick={downloadStrip}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Download
+              </button>
+              <button
+                onClick={shareStrip}
+                className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+              >
+                Share
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
