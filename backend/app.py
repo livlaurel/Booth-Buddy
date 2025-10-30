@@ -16,8 +16,10 @@ def create_app():
 
     from api.v1.strips import bp as strips_bp
     from api.v1.filters import bp as filters_bp
+    from api.v1.storage import bp as storage_bp
     app.register_blueprint(strips_bp)
     app.register_blueprint(filters_bp)
+    app.register_blueprint(storage_bp)
 
     @app.errorhandler(HTTPException)
     def http_err(e):
@@ -44,5 +46,3 @@ app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=True)
-from api.v1.storage import bp as storage_bp
-app.register_blueprint(storage_bp)

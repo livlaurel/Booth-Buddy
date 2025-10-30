@@ -32,8 +32,30 @@ def delete_strip(storage_path: str) -> bool:
 def list_user_strips(user_id: str) -> list:
     try:
         files = supabase.storage.from_("strips").list(path=user_id)
-        return [{"name": f["name"], "id": f["id"]} for f in files]
-    except:
+        if not files:
+            print(f"No files found in {user_id}")
+            return []
+        
+        result = []
+        for f in files:
+            # Skip directories
+            if f.get("id") is None:
+                continue
+                
+            storage_path = f"{user_id}/{f['name']}"
+            public_url = get_public_url(storage_path)
+            result.append({
+                "name": f["name"],
+                "id": f.get("id", ""),
+                "created_at": f.get("created_at", ""),
+                "url": public_url
+            })
+        print(f"Found {len(result)} files for user {user_id}")
+        return result
+    except Exception as e:
+        print(f"List failed for {user_id}: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 def get_public_url(storage_path: str) -> str:

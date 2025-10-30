@@ -8,6 +8,7 @@ const Header = () => {
                 <a href="/" className="text-black flex justify-left">
                     <img src={logo} alt="logo" className="w-40 h-30" />
                 </a>
+                <a href="/gallery" className="mx-4 text-black hover:text-orange-500 font-semibold">Gallery</a>
                 <a href="#/profile" className="flex items-center justify-center w-9 h-9 bg-[#e15c31] rounded-full hover:bg-gray-300">
                     <FaUserAlt className="text-[#fff9f9] text-base" />
                 </a>
