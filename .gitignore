@@ -10,3 +10,4 @@ boothbuddy/.env
 
 # ignore local venv
 backend/venv/
+boothbuddy/src/utils/firebase.ts
