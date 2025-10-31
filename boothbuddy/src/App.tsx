@@ -5,6 +5,7 @@ import SignupPage from "./pages/SignupPage/SignupPage";
 import Download from "./pages/download.tsx"
 import Booth from "./pages/photobooth.tsx"
 import Profile from "./pages/proflie.tsx"
+import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/booth" element={<Booth />} />
         <Route path="/download" element={<Download />} />
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
     </Router>
   );
