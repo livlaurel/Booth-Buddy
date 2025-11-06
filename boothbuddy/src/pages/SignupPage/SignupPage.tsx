@@ -135,7 +135,7 @@ export default function SignupPage() {
           {/* Login Link */}
           <div className="flex flex-row items-center space-x-2">
             <p className="text-sm text-gray-700">Already have an account?</p>
-            <Link to="/login" className="text-sm text-gray-700 hover:underline">
+            <Link to="/login" className="text-sm text-blue-600 hover:underline cursor-pointer">
               Log In
             </Link>
           </div>  
