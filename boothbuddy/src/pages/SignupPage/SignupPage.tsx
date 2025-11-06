@@ -97,7 +97,7 @@ export default function SignupPage() {
               {password && (
                 <ul className="mt-2 text-sm">
                   <li className={getPasswordChecklist(password).length ? "text-green-600" : "text-red-500"}>
-                    {getPasswordChecklist(password).length ? "✓" : "✗"} Between 6–8 characters
+                    {getPasswordChecklist(password).length ? "✓" : "✗"} At least 8 characters
                   </li>
                   <li className={getPasswordChecklist(password).number ? "text-green-600" : "text-red-500"}>
                     {getPasswordChecklist(password).number ? "✓" : "✗"} Contains a number

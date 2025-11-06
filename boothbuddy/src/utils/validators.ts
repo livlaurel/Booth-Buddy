@@ -1,7 +1,7 @@
 // Check individual password requirements
 export function getPasswordChecklist(password: string) {
   return {
-    length: password.length >= 6 && password.length <= 8,
+    length: password.length >= 8 && password.length <= 64,
     number: /[0-9]/.test(password),
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
