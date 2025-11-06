@@ -20,6 +20,8 @@ export default function LoginPage() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
+        setResetMessage("");
         try {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
@@ -32,6 +34,9 @@ export default function LoginPage() {
         }
     };
     const handleForgotPassword = async () => {
+      setError("");          
+      setResetMessage("");
+
       if (!email) {
         setError("Please enter your email first.");
         return;
