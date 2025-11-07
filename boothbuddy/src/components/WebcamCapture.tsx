@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, forwardRef, useImperativeHandle} from "react";
 import { auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -11,7 +11,7 @@ interface Filter {
   maxIntensity: number;
 }
 
-function WebcamCapture() {
+const WebcamCapture = forwardRef((props, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [countdown, setCountdown] = useState<number | null>(null); // For countdown display
@@ -66,6 +66,10 @@ function WebcamCapture() {
       .then(data => setFilters(data.filters || []))
       .catch(err => console.error('Failed to load filters:', err));
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    startCapture: capturePhotoSequence  // parent calls this
+  }));
 
   // Capture a photo
   const capturePhotoSequence = async () => {
@@ -255,16 +259,6 @@ function WebcamCapture() {
   <div className="absolute inset-0 bg-white opacity-75 pointer-events-none"></div>
 )}
 
-      <button
-        onClick={capturePhotoSequence}
-  disabled={isCapturing}
-  className={`${
-    isCapturing ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
-  } text-white px-4 py-2 rounded transition`}
->
-  {isCapturing ? "Capturing..." : "Capture 4 Photos"}
-      </button>
-
       <canvas ref={canvasRef} className="hidden" />
 
       {capturedImages.length > 0 && (
@@ -394,6 +388,6 @@ function WebcamCapture() {
       )}
     </div>
   );
-}
+});
 
 export default WebcamCapture;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import WebcamCapture from "../components/WebcamCapture";
@@ -6,7 +6,9 @@ import WebcamCapture from "../components/WebcamCapture";
 function Booth() {
   const [coinInserted, setCoinInserted] = useState(false);
   const [coinAnimation, setCoinAnimation] = useState(false);
-  const [photos, setPhotos] = useState<string[]>([]);
+
+  // NEW: Ref to control WebcamCapture
+  const webcamRef = useRef<any>(null);
 
   const handleInsertCoin = () => {
     setCoinAnimation(true);
@@ -16,29 +18,24 @@ function Booth() {
     }, 1000);
   };
 
-  const handleTakePhoto = () => {
-    if (photos.length < 4) {
-      const newPhoto = `Photo ${photos.length + 1}`;
-      setPhotos((prevPhotos) => [...prevPhotos, newPhoto]);
-    }
-    if (photos.length === 3) {
-      setCoinInserted(false);
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen text-[#3a3a3a]">
       <Header />
       <main className="flex-grow flex flex-row items-center justify-center space-x-10 p-10">
+
+        {/* Left Side */}
         <div className="flex flex-col items-center">
 
           <div className="relative bg-white border-[3px] border-orange-200 rounded-xl p-6 shadow-lg w-96">
 
             <div className="webcam-container mb-4 rounded-lg overflow-hidden border border-orange-100 shadow-inner">
-              <WebcamCapture />
+              {/* NEW: pass ref to WebcamCapture */}
+              <WebcamCapture ref={webcamRef} />
             </div>
 
             <div className="flex flex-col items-center space-y-6">
+
+              {/* Coin Slot */}
               <div
                 onClick={!coinInserted ? handleInsertCoin : undefined}
                 className={`coin-slot w-20 h-10 bg-white border-2 border-orange-300 rounded-full relative cursor-pointer transition-all ${
@@ -56,30 +53,22 @@ function Booth() {
                 {coinInserted ? "Coin Inserted" : "Tap to insert coin"}
               </p>
 
-              {/* Take Photo Button */}
+              {/* UPDATED BUTTON */}
               <button
-                onClick={handleTakePhoto}
+                onClick={() => webcamRef.current?.startCapture()}
                 className={`bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 px-8 rounded-xl shadow-sm transition-all ${
                   coinInserted ? "" : "opacity-40 cursor-not-allowed"
                 }`}
                 disabled={!coinInserted}
               >
-                Take Photo 
+                Capture 4 Photos
               </button>
+
             </div>
           </div>
         </div>
 
-        <div className="photo-strip bg-white border-[3px] border-orange-200 p-4 rounded-xl shadow-lg w-28 flex flex-col items-center space-y-4">
-          {photos.map((photo, index) => (
-            <div
-              key={index}
-              className="w-24 h-32 bg-orange-50 border border-orange-200 rounded-md flex items-center justify-center text-xs text-orange-700 shadow-inner"
-            >
-              {photo}
-            </div>
-          ))}
-        </div>
+        {/* Photo strip removed because photos now come from WebcamCapture */}
       </main>
 
       <Footer />
