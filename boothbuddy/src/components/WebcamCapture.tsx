@@ -115,8 +115,8 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
       ctx.drawImage(videoRef.current, 0, 0, width, height);
       const dataUrl = canvasRef.current.toDataURL("image/png");
       setCapturedImages((prev) => {
-        const updated = [...prev, dataUrl];    
-        props.onPhotosUpdate?.(updated);      
+        const updated = [...prev, dataUrl];
+        props.onPhotosUpdate?.(updated);         
         return updated;                      
       });
     }
@@ -256,7 +256,7 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
         ref={videoRef}
         autoPlay
         playsInline
-        className="rounded shadow-md w-full max-w-md"
+        className="rounded shadow-md w-full max-w-md transform scale-x-[-1]"
       />
       {countdown !== null && (
   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -271,7 +271,7 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* {capturedImages.length > 0 && (
+      {capturedImages.length > 0 && (
         <div className="mt-4 flex flex-wrap justify-center gap-4">
           {capturedImages.map((img, idx) => (
             <img
@@ -282,7 +282,7 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
             />
           ))}
         </div>
-      )} */}
+      )}
 
       {/* Filter Selector - Shows after 4 photos captured */}
       {capturedImages.length === 4 && !stripPreviewUrl && (
