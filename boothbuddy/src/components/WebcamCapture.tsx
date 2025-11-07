@@ -2,6 +2,10 @@ import { useRef, useState, useEffect, forwardRef, useImperativeHandle} from "rea
 import { auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
+interface WebcamCaptureProps {
+  onPhotosUpdate?: (photos: string[]) => void; // NEW
+}
+
 interface Filter {
   id: string;
   name: string;
@@ -11,7 +15,7 @@ interface Filter {
   maxIntensity: number;
 }
 
-const WebcamCapture = forwardRef((props, ref) => {
+const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [countdown, setCountdown] = useState<number | null>(null); // For countdown display
@@ -77,6 +81,7 @@ const WebcamCapture = forwardRef((props, ref) => {
 
   // Reset previous photos
   setCapturedImages([]);
+  props.onPhotosUpdate?.([]);
   setStripPreviewUrl(null);
   setSelectedFilter("none");
 
@@ -109,7 +114,11 @@ const WebcamCapture = forwardRef((props, ref) => {
     if (ctx) {
       ctx.drawImage(videoRef.current, 0, 0, width, height);
       const dataUrl = canvasRef.current.toDataURL("image/png");
-      setCapturedImages((prev) => [...prev, dataUrl]);
+      setCapturedImages((prev) => {
+        const updated = [...prev, dataUrl];    
+        props.onPhotosUpdate?.(updated);      
+        return updated;                      
+      });
     }
   }
 
@@ -120,6 +129,7 @@ const WebcamCapture = forwardRef((props, ref) => {
   // Reset captured images and preview
   const resetPhotos = () => {
     setCapturedImages([]);
+    props.onPhotosUpdate?.([]);
     setStripPreviewUrl(null);
     setSelectedFilter("none");
   };
@@ -261,7 +271,7 @@ const WebcamCapture = forwardRef((props, ref) => {
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {capturedImages.length > 0 && (
+      {/* {capturedImages.length > 0 && (
         <div className="mt-4 flex flex-wrap justify-center gap-4">
           {capturedImages.map((img, idx) => (
             <img
@@ -272,7 +282,7 @@ const WebcamCapture = forwardRef((props, ref) => {
             />
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Filter Selector - Shows after 4 photos captured */}
       {capturedImages.length === 4 && !stripPreviewUrl && (

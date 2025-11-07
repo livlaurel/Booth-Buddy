@@ -6,9 +6,10 @@ import WebcamCapture from "../components/WebcamCapture";
 function Booth() {
   const [coinInserted, setCoinInserted] = useState(false);
   const [coinAnimation, setCoinAnimation] = useState(false);
-
-  // NEW: Ref to control WebcamCapture
   const webcamRef = useRef<any>(null);
+
+  // NEW: store photos for right-side strip
+  const [stripPhotos, setStripPhotos] = useState<string[]>([]);
 
   const handleInsertCoin = () => {
     setCoinAnimation(true);
@@ -21,21 +22,19 @@ function Booth() {
   return (
     <div className="flex flex-col min-h-screen text-[#3a3a3a]">
       <Header />
+
       <main className="flex-grow flex flex-row items-center justify-center space-x-10 p-10">
 
         {/* Left Side */}
         <div className="flex flex-col items-center">
-
           <div className="relative bg-white border-[3px] border-orange-200 rounded-xl p-6 shadow-lg w-96">
 
             <div className="webcam-container mb-4 rounded-lg overflow-hidden border border-orange-100 shadow-inner">
-              {/* NEW: pass ref to WebcamCapture */}
-              <WebcamCapture ref={webcamRef} />
+              <WebcamCapture ref={webcamRef} onPhotosUpdate={setStripPhotos} />
             </div>
 
             <div className="flex flex-col items-center space-y-6">
 
-              {/* Coin Slot */}
               <div
                 onClick={!coinInserted ? handleInsertCoin : undefined}
                 className={`coin-slot w-20 h-10 bg-white border-2 border-orange-300 rounded-full relative cursor-pointer transition-all ${
@@ -53,7 +52,6 @@ function Booth() {
                 {coinInserted ? "Coin Inserted" : "Tap to insert coin"}
               </p>
 
-              {/* UPDATED BUTTON */}
               <button
                 onClick={() => webcamRef.current?.startCapture()}
                 className={`bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 px-8 rounded-xl shadow-sm transition-all ${
@@ -63,12 +61,26 @@ function Booth() {
               >
                 Capture 4 Photos
               </button>
-
             </div>
           </div>
         </div>
 
-        {/* Photo strip removed because photos now come from WebcamCapture */}
+        {/* Right side: Live photostrip */}
+        <div className="photo-strip bg-white border-[3px] border-orange-200 p-4 rounded-xl shadow-lg w-28 flex flex-col items-center space-y-4">
+          {stripPhotos.map((photo, index) => (
+            <div
+              key={index}
+              className="w-24 h-32 bg-orange-50 border border-orange-200 rounded-md overflow-hidden shadow-inner"
+            >
+              <img
+                src={photo}
+                alt={`strip photo ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+
       </main>
 
       <Footer />
