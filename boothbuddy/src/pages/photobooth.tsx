@@ -27,9 +27,18 @@ function Booth() {
 
         {/* Left Side */}
         <div className="flex flex-col items-center">
-          <div className="relative bg-white border-[3px] border-orange-200 rounded-xl p-6 shadow-lg w-96">
+          <div className="relative bg-white border-[3px] border-black rounded-xl p-6 shadow-lg w-96">
 
-            <div className="webcam-container mb-4 rounded-lg overflow-hidden border border-orange-100 shadow-inner">
+            {/* Red/Green Light */}
+            <div
+              className={`absolute top-2 right-2 w-4 h-4 rounded-full ${
+                coinInserted
+                  ? "bg-green-500 shadow-[0_0_8px_2px_rgba(34,197,94,0.7)]"
+                  : "bg-red-500 shadow-[0_0_8px_2px_rgba(239,68,68,0.7)]"
+              }`}
+            ></div>
+
+            <div className="webcam-container mb-4 rounded-lg overflow-hidden border-3 border-stone-950 shadow-inner">
               <WebcamCapture ref={webcamRef} onPhotosUpdate={setStripPhotos} />
             </div>
 
@@ -41,7 +50,7 @@ function Booth() {
                   coinInserted ? "opacity-50 pointer-events-none" : "hover:shadow-md"
                 }`}
               >
-                <div className="slot w-10 h-1 bg-orange-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded"></div>
+                <div className="slot w-10 h-1 bg-stone-950 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded"></div>
 
                 {coinAnimation && (
                   <div className="coin w-6 h-6 bg-yellow-400 border border-yellow-500 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2 animate-drop shadow-sm"></div>
@@ -61,6 +70,22 @@ function Booth() {
               >
                 Take Pictures
               </button>
+            </div>
+          </div>
+
+          {/* Bottom Instruction Bar */}
+          <div className="instruction-bar flex justify-center items-center space-x-4 mt-6 w-full">
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
+              <img src="/instructions/step1.png" alt="Step 1" className="w-full h-full object-contain" />
+            </div>
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
+              <img src="/instructions/step2.png" alt="Step 2" className="w-full h-full object-contain" />
+            </div>
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
+              <img src="/instructions/step3.png" alt="Step 3" className="w-full h-full object-contain" />
+            </div>
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
+              <img src="/instructions/step4.png" alt="Step 4" className="w-full h-full object-contain" />
             </div>
           </div>
         </div>

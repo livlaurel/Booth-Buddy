@@ -271,7 +271,7 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {capturedImages.length > 0 && (
+      {/* {capturedImages.length > 0 && (
         <div className="mt-4 flex flex-wrap justify-center gap-4">
           {capturedImages.map((img, idx) => (
             <img
@@ -282,7 +282,7 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
             />
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Filter Selector - Shows after 4 photos captured */}
       {capturedImages.length === 4 && !stripPreviewUrl && (
