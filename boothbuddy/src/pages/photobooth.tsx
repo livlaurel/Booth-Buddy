@@ -2,6 +2,11 @@ import { useState, useRef } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import WebcamCapture from "../components/WebcamCapture";
+import step1 from "../imgs/step1.png";
+import step2 from "../imgs/step2.png";
+import step3 from "../imgs/step3.png";
+import step4 from "../imgs/step4.png";
+
 
 function Booth() {
   const [coinInserted, setCoinInserted] = useState(false);
@@ -75,17 +80,17 @@ function Booth() {
 
           {/* Bottom Instruction Bar */}
           <div className="instruction-bar flex justify-center items-center space-x-4 mt-6 w-full">
-            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
-              <img src="/instructions/step1.png" alt="Step 1" className="w-full h-full object-contain" />
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg border-3 border-black shadow-md flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+              <img src={step1} alt="Step 1" className="w-full h-full object-contain" />
             </div>
-            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
-              <img src="/instructions/step2.png" alt="Step 2" className="w-full h-full object-contain" />
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg border-3 border-black shadow-md flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+              <img src={step2} alt="Step 2" className="w-full h-full object-contain" />
             </div>
-            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
-              <img src="/instructions/step3.png" alt="Step 3" className="w-full h-full object-contain" />
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg border-3 border-black shadow-md flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+              <img src={step3}  alt="Step 3" className="w-full h-full object-contain" />
             </div>
-            <div className="instruction-step w-24 h-24 bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
-              <img src="/instructions/step4.png" alt="Step 4" className="w-full h-full object-contain" />
+            <div className="instruction-step w-24 h-24 bg-white rounded-lg border-3 border-black shadow-md flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+              <img src={step4}  alt="Step 4" className="w-full h-full object-contain" />
             </div>
           </div>
         </div>
