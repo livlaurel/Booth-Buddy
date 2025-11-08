@@ -65,17 +65,17 @@ function Booth() {
           </div>
         </div>
 
-        {/* Right side: Live photostrip */}
-        <div className="photo-strip bg-white border-[3px] border-orange-200 p-4 rounded-xl shadow-lg w-28 flex flex-col items-center space-y-4">
+        {/* Right Side: Photo Strip */}
+        <div className="photo-strip bg-black p-4 rounded-lg shadow-lg">
           {stripPhotos.map((photo, index) => (
             <div
               key={index}
-              className="w-24 h-32 bg-orange-50 border border-orange-200 rounded-md overflow-hidden shadow-inner"
+              className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden"
             >
               <img
                 src={photo}
-                alt={`strip photo ${index + 1}`}
-                className="w-full h-full object-cover"
+                alt={`Strip Photo ${index}`}
+                className="w-full grayscale"
               />
             </div>
           ))}
