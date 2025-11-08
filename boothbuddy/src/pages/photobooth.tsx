@@ -49,7 +49,7 @@ function Booth() {
               </div>
 
               <p className="text-sm text-orange-400">
-                {coinInserted ? "Coin Inserted" : "Tap to insert coin"}
+                {coinInserted ? "Coin Inserted" : "Click to Insert Coin"}
               </p>
 
               <button
