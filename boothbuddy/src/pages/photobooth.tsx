@@ -59,7 +59,7 @@ function Booth() {
                 }`}
                 disabled={!coinInserted}
               >
-                Capture 4 Photos
+                Take Pictures
               </button>
             </div>
           </div>
