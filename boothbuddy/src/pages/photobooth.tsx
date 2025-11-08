@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import WebcamCapture from "../components/WebcamCapture";
+import { FaUserAlt } from "react-icons/fa";
 import step1 from "../imgs/step1.png";
 import step2 from "../imgs/step2.png";
 import step3 from "../imgs/step3.png";
@@ -96,19 +97,31 @@ function Booth() {
         </div>
 
         {/* Right Side: Photo Strip */}
-        <div className="photo-strip bg-black p-4 rounded-lg shadow-lg">
-          {stripPhotos.map((photo, index) => (
-            <div
-              key={index}
-              className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden"
-            >
-              <img
-                src={photo}
-                alt={`Strip Photo ${index}`}
-                className="w-full grayscale"
-              />
-            </div>
-          ))}
+        <div className="photo-strip bg-black p-4 rounded-lg shadow-lg flex flex-col justify-start items-center h-full">
+          {stripPhotos.length > 0 ? (
+            stripPhotos.map((photo, index) => (
+              <div
+                key={index}
+                className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden"
+              >
+                <img
+                  src={photo}
+                  alt={`Strip Photo ${index}`}
+                  className="w-full grayscale"
+                />
+              </div>
+            ))
+          ) : (
+            // Placeholder for empty photo strip
+            Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden w-20 h-28 flex items-center justify-center"
+              >
+                 <FaUserAlt className="text-black text-3xl" />
+              </div>
+            ))
+          )}
         </div>
 
       </main>
