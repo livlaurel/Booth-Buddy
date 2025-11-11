@@ -1,6 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, forwardRef, useImperativeHandle} from "react";
 import { auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+
+interface WebcamCaptureProps {
+  onPhotosUpdate?: (photos: string[]) => void; // NEW
+}
 
 interface Filter {
   id: string;
@@ -11,7 +15,7 @@ interface Filter {
   maxIntensity: number;
 }
 
-function WebcamCapture() {
+const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [countdown, setCountdown] = useState<number | null>(null); // For countdown display
@@ -67,12 +71,17 @@ function WebcamCapture() {
       .catch(err => console.error('Failed to load filters:', err));
   }, []);
 
+  useImperativeHandle(ref, () => ({
+    startCapture: capturePhotoSequence  // parent calls this
+  }));
+
   // Capture a photo
   const capturePhotoSequence = async () => {
   if (!videoRef.current || !canvasRef.current) return;
 
   // Reset previous photos
   setCapturedImages([]);
+  props.onPhotosUpdate?.([]);
   setStripPreviewUrl(null);
   setSelectedFilter("none");
 
@@ -105,7 +114,11 @@ function WebcamCapture() {
     if (ctx) {
       ctx.drawImage(videoRef.current, 0, 0, width, height);
       const dataUrl = canvasRef.current.toDataURL("image/png");
-      setCapturedImages((prev) => [...prev, dataUrl]);
+      setCapturedImages((prev) => {
+        const updated = [...prev, dataUrl];
+        props.onPhotosUpdate?.(updated);         
+        return updated;                      
+      });
     }
   }
 
@@ -116,6 +129,7 @@ function WebcamCapture() {
   // Reset captured images and preview
   const resetPhotos = () => {
     setCapturedImages([]);
+    props.onPhotosUpdate?.([]);
     setStripPreviewUrl(null);
     setSelectedFilter("none");
   };
@@ -242,7 +256,7 @@ function WebcamCapture() {
         ref={videoRef}
         autoPlay
         playsInline
-        className="rounded shadow-md w-full max-w-md"
+        className="rounded shadow-md w-full max-w-md transform scale-x-[-1]"
       />
       {countdown !== null && (
   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -255,19 +269,9 @@ function WebcamCapture() {
   <div className="absolute inset-0 bg-white opacity-75 pointer-events-none"></div>
 )}
 
-      <button
-        onClick={capturePhotoSequence}
-  disabled={isCapturing}
-  className={`${
-    isCapturing ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
-  } text-white px-4 py-2 rounded transition`}
->
-  {isCapturing ? "Capturing..." : "Capture 4 Photos"}
-      </button>
-
       <canvas ref={canvasRef} className="hidden" />
 
-      {capturedImages.length > 0 && (
+      {/* {capturedImages.length > 0 && (
         <div className="mt-4 flex flex-wrap justify-center gap-4">
           {capturedImages.map((img, idx) => (
             <img
@@ -278,7 +282,7 @@ function WebcamCapture() {
             />
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Filter Selector - Shows after 4 photos captured */}
       {capturedImages.length === 4 && !stripPreviewUrl && (
@@ -394,6 +398,6 @@ function WebcamCapture() {
       )}
     </div>
   );
-}
+});
 
 export default WebcamCapture;
