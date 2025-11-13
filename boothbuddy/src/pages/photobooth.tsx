@@ -3,16 +3,34 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 import WebcamCapture from "../components/WebcamCapture";
 import { FaUserAlt } from "react-icons/fa";
-import step1 from "../imgs/step1.png";
-import step2 from "../imgs/step2.png";
-import step3 from "../imgs/step3.png";
-import step4 from "../imgs/step4.png";
-
+import PhotoBoothControls from "../components/PhotoBoothControls";
+import step1 from "../imgs/1.png";
+import step2 from "../imgs/2.png";
+import step3 from "../imgs/3.png";
+import step4 from "../imgs/4.png";
 
 function Booth() {
   const [coinInserted, setCoinInserted] = useState(false);
   const [coinAnimation, setCoinAnimation] = useState(false);
   const webcamRef = useRef<any>(null);
+
+
+  // States for filters and controls
+  // Define the Filter type
+  type Filter = {
+    id: "grayscale",
+    name: "Grayscale",
+    description: "Classic",
+    defaultIntensity: 1,
+    minIntensity: 0,
+    maxIntensity: 1,
+  };
+  
+  const [filters, setFilters] = useState<Filter[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState<string>("none");
+  const [filterIntensity, setFilterIntensity] = useState<number>(1.0);
+  const [isApplyingFilter, setIsApplyingFilter] = useState(false);
+
 
   // NEW: store photos for right-side strip
   const [stripPhotos, setStripPhotos] = useState<string[]>([]);
@@ -24,6 +42,20 @@ function Booth() {
       setCoinAnimation(false);
     }, 1000);
   };
+
+  const applyFilter = async () => {
+    // Logic for applying filter
+  };
+
+  const createStrip = async () => {
+    // Logic for creating strip
+  };
+
+  const resetPhotos = () => {
+    setStripPhotos([]);
+    setSelectedFilter("none");
+  };
+
 
   return (
     <div className="flex flex-col min-h-screen text-[#3a3a3a]">
@@ -95,35 +127,52 @@ function Booth() {
             </div>
           </div>
         </div>
+        
+        <div>
+          {/* Right Side: Photo Strip */}
+          <div className="ml-10">
+            <div className="photo-strip bg-black p-4 rounded-lg shadow-lg flex flex-col justify-start items-center h-full">
+              {stripPhotos.length > 0 ? (
+                stripPhotos.map((photo, index) => (
+                  <div
+                    key={index}
+                    className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden w-20 h-28 flex items-center justify-center"
+                  >
+                    <img
+                      src={photo}
+                      alt={`Strip Photo ${index}`}
+                      className="w-full"
+                    />
+                  </div>
+                ))
+              ) : (
+                // Placeholder for empty photo strip
+                Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden w-20 h-28 flex items-center justify-center"
+                  >
+                    <FaUserAlt className="text-black text-3xl" />
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
 
-        {/* Right Side: Photo Strip */}
-        <div className="photo-strip bg-black p-4 rounded-lg shadow-lg flex flex-col justify-start items-center h-full">
-          {stripPhotos.length > 0 ? (
-            stripPhotos.map((photo, index) => (
-              <div
-                key={index}
-                className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden"
-              >
-                <img
-                  src={photo}
-                  alt={`Strip Photo ${index}`}
-                  className="w-full grayscale"
-                />
-              </div>
-            ))
-          ) : (
-            // Placeholder for empty photo strip
-            Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="photo-frame mb-4 last:mb-0 bg-white p-1 rounded overflow-hidden w-20 h-28 flex items-center justify-center"
-              >
-                 <FaUserAlt className="text-black text-3xl" />
-              </div>
-            ))
-          )}
+            <div className="p-4 rounded-lg shadow-lg border-3 border-black mt-5 flex flex-col justify-start items-center h-full">
+            <PhotoBoothControls
+              filters={filters}
+              selectedFilter={selectedFilter}
+              setSelectedFilter={setSelectedFilter}
+              filterIntensity={filterIntensity}
+              setFilterIntensity={setFilterIntensity}
+              isApplyingFilter={isApplyingFilter}
+              applyFilter={applyFilter}
+              createStrip={createStrip}
+              resetPhotos={resetPhotos}
+            />
+          </div>
         </div>
-
       </main>
 
       <Footer />
