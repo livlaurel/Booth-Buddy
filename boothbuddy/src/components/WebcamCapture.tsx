@@ -285,7 +285,7 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
       )} */}
 
       {/* Filter Selector - Shows after 4 photos captured */}
-      {capturedImages.length === 4 && !stripPreviewUrl && (
+      {/* {capturedImages.length === 4 && !stripPreviewUrl && (
         <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow w-full max-w-md">
           <h3 className="text-lg font-semibold mb-3">Apply Filter (Optional)</h3>
           
@@ -395,7 +395,7 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 });
