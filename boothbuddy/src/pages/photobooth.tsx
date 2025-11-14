@@ -49,6 +49,26 @@ function Booth() {
 
   const createStrip = async () => {
     // Logic for creating strip
+    if (stripPhotos.length === 0) return;
+
+    const canvas = document.createElement("canvas");
+    const width = 200; // width of each photo
+    const height = 280; // height of each photo
+    canvas.width = width;
+    canvas.height = height * stripPhotos.length;
+    const ctx = canvas.getContext("2d")!;
+
+    for (let i = 0; i < stripPhotos.length; i++) {
+      const img = new Image();
+      img.src = stripPhotos[i];
+      await new Promise((res) => (img.onload = res));
+      ctx.drawImage(img, 0, i * height, width, height);
+    }
+
+    const link = document.createElement("a");
+    link.download = "photo-strip.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
   };
 
   const resetPhotos = () => {
