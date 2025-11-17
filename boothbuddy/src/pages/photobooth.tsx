@@ -169,7 +169,7 @@ function Booth() {
                 className={`bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 px-8 rounded-xl shadow-sm transition-all ${
                   coinInserted ? "" : "opacity-40 cursor-not-allowed"
                 }`}
-                disabled={!coinInserted}
+                disabled={!coinInserted || webcamRef.current?.isCapturing()}
               >
                 Take Pictures
               </button>

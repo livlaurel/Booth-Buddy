@@ -51,7 +51,8 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
 
 
   useImperativeHandle(ref, () => ({
-    startCapture: capturePhotoSequence  // parent calls this
+    startCapture: capturePhotoSequence,  // parent calls this
+    isCapturing: () => isCapturing,
   }));
 
   // Capture a photo
