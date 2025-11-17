@@ -2,13 +2,13 @@ import React from "react";
 import { FaDownload } from "react-icons/fa";
 
 // Define the Filter type
-interface Filter {
-    id: "grayscale",
-    name: "Grayscale",
-    description: "Classic",
-    defaultIntensity: 1,
-    minIntensity: 0,
-    maxIntensity: 1,
+export interface Filter {
+    id: string;
+    name: string;
+    description: string;
+    defaultIntensity: number;
+    minIntensity: number;
+    maxIntensity: number;
 }
 
 interface PhotoBoothControlsProps {
