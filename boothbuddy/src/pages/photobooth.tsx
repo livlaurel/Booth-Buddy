@@ -20,6 +20,7 @@ function Booth() {
   const [selectedFilter, setSelectedFilter] = useState<string>("none");
   const [filterIntensity, setFilterIntensity] = useState<number>(1.0);
   const [isApplyingFilter, setIsApplyingFilter] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
 
   // NEW: store photos for right-side strip
@@ -39,6 +40,16 @@ function Booth() {
       .then(data => setFilters(data.filters || []))
       .catch(err => console.error("Failed to fetch filters:", err));
   }, []);
+
+  useEffect(() => {
+    if (isGuest && filters.length > 0) {
+      const guestFilter = filters.find(f => f.id === "grayscale"); // allowed guest filter
+      if (guestFilter) {
+        setSelectedFilter(guestFilter.id);
+        setFilterIntensity(guestFilter.defaultIntensity);
+      }
+    }
+  }, [isGuest, filters]);
 
   const handlePhotosUpdate = (photos: string[]) => {
     setStripPhotos(photos);
@@ -142,7 +153,8 @@ function Booth() {
             ></div>
 
             <div className="webcam-container mb-4 rounded-lg overflow-hidden border-3 border-stone-950 shadow-inner">
-              <WebcamCapture ref={webcamRef} onPhotosUpdate={handlePhotosUpdate} />
+              <WebcamCapture ref={webcamRef} onPhotosUpdate={handlePhotosUpdate}
+              onGuestStatusChange={setIsGuest} />
             </div>
 
             <div className="flex flex-col items-center space-y-6">
@@ -235,6 +247,7 @@ function Booth() {
               applyFilter={applyFilter}
               createStrip={createStrip}
               resetPhotos={resetPhotos}
+              isGuest={isGuest}
             />
           </div>
         </div>

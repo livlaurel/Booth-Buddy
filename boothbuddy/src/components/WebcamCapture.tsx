@@ -1,9 +1,12 @@
-import { useRef, useState, useEffect, forwardRef, useImperativeHandle} from "react";
+import { useRef, useState, useEffect, forwardRef, useImperativeHandle, } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
 interface WebcamCaptureProps {
   onPhotosUpdate?: (photos: string[]) => void; // NEW
+  onGuestStatusChange?: Dispatch<SetStateAction<boolean>>; 
+
 }
 
 const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
@@ -18,7 +21,9 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsGuest(user ? user.isAnonymous : false);
+      const guest = user ? user.isAnonymous : false;
+      setIsGuest(guest);
+      props.onGuestStatusChange?.(guest);
     });
     return () => unsubscribe();
   }, []);

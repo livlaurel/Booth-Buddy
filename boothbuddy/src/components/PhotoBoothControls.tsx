@@ -21,6 +21,7 @@ interface PhotoBoothControlsProps {
   applyFilter: () => Promise<void>;
   createStrip: () => Promise<void>;
   resetPhotos: () => void;
+  isGuest?: boolean;
 }
 
 const PhotoBoothControls: React.FC<PhotoBoothControlsProps> = ({
@@ -33,6 +34,7 @@ const PhotoBoothControls: React.FC<PhotoBoothControlsProps> = ({
   applyFilter,
   createStrip,
   resetPhotos,
+  isGuest,
 }) => {
   const selectedFilterData = filters.find((f) => f.id === selectedFilter);
 
@@ -52,11 +54,29 @@ const PhotoBoothControls: React.FC<PhotoBoothControlsProps> = ({
           className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
         >
           <option value="none">No Filter</option>
-          {filters.map((filter) => (
+          {isGuest
+      ? (
+          // Guests: can pick grayscale
+          <option key="grayscale" value="grayscale">Grayscale</option>
+        )
+      : (
+          // Logged-in: show all filters
+          filters.map((filter) => (
             <option key={filter.id} value={filter.id}>
               {filter.name} - {filter.description}
             </option>
-          ))}
+          ))
+        )
+    }
+
+    {isGuest &&
+      filters
+        .filter((f) => f.id !== "grayscale")
+        .map((filter) => (
+          <option key={filter.id} value={filter.id} disabled>
+            {filter.name} - Sign up to unlock
+          </option>
+        ))}
         </select>
       </div>
 
