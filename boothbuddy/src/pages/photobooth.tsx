@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect} from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import WebcamCapture from "../components/WebcamCapture";
 import { FaUserAlt } from "react-icons/fa";
 import PhotoBoothControls from "../components/PhotoBoothControls";
+import type { Filter } from "../components/PhotoBoothControls";
 import step1 from "../imgs/1.png";
 import step2 from "../imgs/2.png";
 import step3 from "../imgs/3.png";
@@ -14,26 +15,17 @@ function Booth() {
   const [coinAnimation, setCoinAnimation] = useState(false);
   const webcamRef = useRef<any>(null);
 
-
-  // States for filters and controls
-  // Define the Filter type
-  type Filter = {
-    id: "grayscale",
-    name: "Grayscale",
-    description: "Classic",
-    defaultIntensity: 1,
-    minIntensity: 0,
-    maxIntensity: 1,
-  };
   
   const [filters, setFilters] = useState<Filter[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>("none");
   const [filterIntensity, setFilterIntensity] = useState<number>(1.0);
   const [isApplyingFilter, setIsApplyingFilter] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
 
   // NEW: store photos for right-side strip
   const [stripPhotos, setStripPhotos] = useState<string[]>([]);
+  const originalPhotosRef = useRef<string[]>([]);
 
   const handleInsertCoin = () => {
     setCoinAnimation(true);
@@ -42,20 +34,104 @@ function Booth() {
       setCoinAnimation(false);
     }, 1000);
   };
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/v1/filters/types`)
+      .then(res => res.json())
+      .then(data => setFilters(data.filters || []))
+      .catch(err => console.error("Failed to fetch filters:", err));
+  }, []);
+
+  useEffect(() => {
+    if (isGuest && filters.length > 0) {
+      const guestFilter = filters.find(f => f.id === "grayscale"); // allowed guest filter
+      if (guestFilter) {
+        setSelectedFilter(guestFilter.id);
+        setFilterIntensity(guestFilter.defaultIntensity);
+      }
+    }
+  }, [isGuest, filters]);
+
+  const handlePhotosUpdate = (photos: string[]) => {
+    setStripPhotos(photos);
+    originalPhotosRef.current = photos; // store originals
+  };
 
   const applyFilter = async () => {
     // Logic for applying filter
+    if (selectedFilter === "none" || stripPhotos.length === 0) return;
+
+    setIsApplyingFilter(true);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/filters/apply`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            images: originalPhotosRef.current,
+            filterType: selectedFilter,
+            intensity: filterIntensity,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to apply filter");
+
+      const data = await response.json();
+      setStripPhotos(data.filteredImages); // Update preview dynamically
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to apply filter");
+    } finally {
+      setIsApplyingFilter(false);
+    }
   };
+
+  // Live preview: apply filter whenever filter or intensity changes
+  useEffect(() => {
+    if (stripPhotos.length === 0) return;
+    if (selectedFilter === "none") {
+      setStripPhotos(originalPhotosRef.current);
+      return;
+    }
+
+    // debounce to avoid too many requests
+    const timeout = setTimeout(() => {
+      applyFilter();
+    }, 200);
+
+    return () => clearTimeout(timeout);
+  }, [selectedFilter, filterIntensity]);
 
   const createStrip = async () => {
     // Logic for creating strip
+    if (stripPhotos.length === 0) return;
+
+    const canvas = document.createElement("canvas");
+    const width = 200; // width of each photo
+    const height = 280; // height of each photo
+    canvas.width = width;
+    canvas.height = height * stripPhotos.length;
+    const ctx = canvas.getContext("2d")!;
+
+    for (let i = 0; i < stripPhotos.length; i++) {
+      const img = new Image();
+      img.src = stripPhotos[i];
+      await new Promise((res) => (img.onload = res));
+      ctx.drawImage(img, 0, i * height, width, height);
+    }
+
+    const link = document.createElement("a");
+    link.download = "photo-strip.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
   };
 
   const resetPhotos = () => {
     setStripPhotos([]);
     setSelectedFilter("none");
   };
-
 
   return (
     <div className="flex flex-col min-h-screen text-[#3a3a3a]">
@@ -77,7 +153,8 @@ function Booth() {
             ></div>
 
             <div className="webcam-container mb-4 rounded-lg overflow-hidden border-3 border-stone-950 shadow-inner">
-              <WebcamCapture ref={webcamRef} onPhotosUpdate={setStripPhotos} />
+              <WebcamCapture ref={webcamRef} onPhotosUpdate={handlePhotosUpdate}
+              onGuestStatusChange={setIsGuest} />
             </div>
 
             <div className="flex flex-col items-center space-y-6">
@@ -104,7 +181,7 @@ function Booth() {
                 className={`bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 px-8 rounded-xl shadow-sm transition-all ${
                   coinInserted ? "" : "opacity-40 cursor-not-allowed"
                 }`}
-                disabled={!coinInserted}
+                disabled={!coinInserted || webcamRef.current?.isCapturing()}
               >
                 Take Pictures
               </button>
@@ -170,6 +247,7 @@ function Booth() {
               applyFilter={applyFilter}
               createStrip={createStrip}
               resetPhotos={resetPhotos}
+              isGuest={isGuest}
             />
           </div>
         </div>

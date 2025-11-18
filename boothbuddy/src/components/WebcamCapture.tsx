@@ -1,18 +1,12 @@
-import { useRef, useState, useEffect, forwardRef, useImperativeHandle} from "react";
+import { useRef, useState, useEffect, forwardRef, useImperativeHandle, } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
 interface WebcamCaptureProps {
   onPhotosUpdate?: (photos: string[]) => void; // NEW
-}
+  onGuestStatusChange?: Dispatch<SetStateAction<boolean>>; 
 
-interface Filter {
-  id: string;
-  name: string;
-  description: string;
-  defaultIntensity: number;
-  minIntensity: number;
-  maxIntensity: number;
 }
 
 const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
@@ -22,21 +16,18 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
   const [isCapturing, setIsCapturing] = useState(false); // To disable buttons during capture
   const [flash, setFlash] = useState(false); // For camera flash effect
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
-  const [stripPreviewUrl, setStripPreviewUrl] = useState<string | null>(null);
+  //const [stripPreviewUrl, setStripPreviewUrl] = useState<string | null>(null);
   const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsGuest(user ? user.isAnonymous : false);
+      const guest = user ? user.isAnonymous : false;
+      setIsGuest(guest);
+      props.onGuestStatusChange?.(guest);
     });
     return () => unsubscribe();
   }, []);
   
-  // Filter states
-  const [filters, setFilters] = useState<Filter[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState<string>("none");
-  const [filterIntensity, setFilterIntensity] = useState<number>(1.0);
-  const [isApplyingFilter, setIsApplyingFilter] = useState(false);
 
   // Start webcam
   useEffect(() => {
@@ -63,16 +54,10 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
     };
   }, []);
 
-  // Load available filters
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/v1/filters/types`)
-      .then(res => res.json())
-      .then(data => setFilters(data.filters || []))
-      .catch(err => console.error('Failed to load filters:', err));
-  }, []);
 
   useImperativeHandle(ref, () => ({
-    startCapture: capturePhotoSequence  // parent calls this
+    startCapture: capturePhotoSequence,  // parent calls this
+    isCapturing: () => isCapturing,
   }));
 
   // Capture a photo
@@ -82,9 +67,6 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
   // Reset previous photos
   setCapturedImages([]);
   props.onPhotosUpdate?.([]);
-  setStripPreviewUrl(null);
-  setSelectedFilter("none");
-
   setIsCapturing(true);
 
   const numPhotos = 4;
@@ -124,131 +106,6 @@ const WebcamCapture = forwardRef((props: WebcamCaptureProps, ref) => {
 
   setIsCapturing(false);
 };
-
-
-  // Reset captured images and preview
-  const resetPhotos = () => {
-    setCapturedImages([]);
-    props.onPhotosUpdate?.([]);
-    setStripPreviewUrl(null);
-    setSelectedFilter("none");
-  };
-
-  // Apply filter to images
-  const applyFilter = async () => {
-    if (selectedFilter === "none" || capturedImages.length !== 4) return;
-
-    setIsApplyingFilter(true);
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/filters/apply`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          images: capturedImages,
-          filterType: selectedFilter,
-          intensity: filterIntensity
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || "Failed to apply filter");
-      }
-
-      const data = await response.json();
-      setCapturedImages(data.filteredImages);
-      alert("Filter applied successfully!");
-
-    } catch (error: any) {
-      console.error("Error applying filter:", error);
-      alert(`Error applying filter: ${error.message}`);
-    } finally {
-      setIsApplyingFilter(false);
-    }
-  };
-
-  // Send images to backend to create photo strip
-  const createStrip = async () => {
-    if (capturedImages.length !== 4) {
-      alert("Please capture exactly 4 photos to create a strip.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/strips/compose`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          frames: capturedImages,
-          frameWidth: 320,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || "Failed to create strip");
-      }
-
-      const data = await response.json();
-      setStripPreviewUrl(`${import.meta.env.VITE_API_URL}${data.previewUrl}`);
-      alert("Strip created! Preview below.");
-
-    } catch (error: any) {
-      console.error("Error creating strip:", error);
-      alert(`Error creating strip: ${error.message}`);
-    }
-  };
-
-  // Download strip image
-  const downloadStrip = async () => {
-    if (!stripPreviewUrl) return;
-
-    try {
-      const response = await fetch(stripPreviewUrl);
-      if (!response.ok) throw new Error("Failed to fetch image");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "photostrip.png";
-      document.body.appendChild(link);
-      link.click();
-
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Download failed:", error);
-    }
-  };
-
-  // Share strip image
-  const shareStrip = async () => {
-    if (!stripPreviewUrl) return;
-
-    if (navigator.share) {
-      try {
-        const response = await fetch(stripPreviewUrl);
-        const blob = await response.blob();
-        const file = new File([blob], "photostrip.png", { type: "image/png" });
-
-        await navigator.share({
-          files: [file],
-          title: "My Photo Strip",
-          text: "Check out my photo strip from BoothBuddy!",
-        });
-      } catch (error) {
-        alert("Sharing failed: " + error);
-      }
-    } else {
-      alert("Sharing not supported on this browser.");
-    }
-  };
-
-  const selectedFilterData = filters.find(f => f.id === selectedFilter);
 
   return (
     <div className="relative flex flex-col items-center space-y-4 p-4">
