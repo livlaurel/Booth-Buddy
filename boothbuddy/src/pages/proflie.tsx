@@ -1,22 +1,19 @@
-import Header from "../components/header"
-import Footer from "../components/footer"
+import Header from "../components/header";
+import Footer from "../components/footer";
 
-function Profile() {
+export default function ProfilePage() {
   return (
-    <>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow flex justify-center items-center">
-          <div className="flex flex-col items-center space-y-4">
-            <h1 className="text-3xl font-black text-black">
-              Profile
-            </h1>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    </>
-  )
-}
+    <div className="flex flex-col min-h-screen">
+      <Header />
 
-export default Profile
+      <main className="flex-1 px-4 sm:px-8 lg:px-16 pb-12">
+        {/* Profile Page */}
+        <div className="pt-10 text-center text-gray-500">
+          Loading profile...
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
