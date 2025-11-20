@@ -51,6 +51,26 @@ export default function ProfilePage() {
             </button>
           </div>
         </section>
+        {/* STRIPS GRID (mock for now) */}
+        <section className="mt-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            {/* Temporary mock thumbnails */}
+            {[1, 2, 3, 4, 5, 6].map((id) => (
+              <div
+                key={id}
+                className="bg-white shadow-md rounded-2xl border border-gray-200 hover:shadow-xl hover:-translate-y-0.5 transition p-2 cursor-pointer"
+              >
+                <div className="w-full h-40 overflow-hidden rounded-xl bg-gray-50">
+                  <img
+                    src="/placeholderr-strip.png"
+                    alt="Strip preview"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
 
       <Footer />
