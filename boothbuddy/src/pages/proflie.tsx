@@ -40,6 +40,17 @@ export default function ProfilePage() {
             </button>
           </div>
         </section>
+        {/* MY STRIPS TAB */}
+        <section className="mt-4 flex justify-center">
+          <div className="inline-flex gap-6 border-b border-gray-200">
+            <button
+              type="button"
+              className="pb-2 text-sm sm:text-base font-medium text-black border-b-2 border-black"
+            >
+              My Strips
+            </button>
+          </div>
+        </section>
       </main>
 
       <Footer />
