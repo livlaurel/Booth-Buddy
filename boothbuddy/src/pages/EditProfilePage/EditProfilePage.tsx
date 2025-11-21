@@ -9,8 +9,6 @@ export default function EditProfilePage() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [photoPreview, setPhotoPreview] = useState("/default-avatarr.jpg");
-    const [loading, setLoading] = useState(true);
-
     useEffect(() => {
         const user = auth.currentUser;
 
@@ -20,8 +18,12 @@ export default function EditProfilePage() {
             setPhotoPreview(user.photoURL || "/default-avatarr.jpg");
         }
 
-        setLoading(false);
     }, []);
+
+    const handleSave = () => {
+        console.log("Saving profile changes...");
+        // Saving logic to be added
+    };
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -94,6 +96,7 @@ export default function EditProfilePage() {
 
                 <button
                     type="button"
+                    onClick={handleSave}
                     className="px-6 py-2 rounded-full bg-[#e15c31] text-white hover:bg-[#ff9573]"
                 >
                     Save
