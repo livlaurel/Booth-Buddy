@@ -27,6 +27,21 @@ export default function EditProfilePage() {
                     <input type="file" accept="image/*" className="hidden" />
                 </label>
             </div>
+            {/* EMAIL FIELD */}
+            <div className="mb-10">
+                <div className="text-center mb-2">
+                    <label className="text-sm font-semibold text-gray-700">Email</label>
+                </div>
+
+                <div className="border border-gray-300 rounded-3xl px-6 py-4 bg-gray-100">
+                    <input
+                    type="text"
+                    value={"user@example.com"}  // will populate later
+                    disabled
+                    className="w-full text-lg font-semibold text-gray-500 focus:outline-none bg-gray-100 cursor-not-allowed"
+                    />
+                </div>
+            </div>
 
             {/* USERNAME FIELD */}
             <div className="mb-10">
@@ -47,20 +62,21 @@ export default function EditProfilePage() {
                     www.boothbuddy.com/abcde
                 </p>
             </div>
-            {/* EMAIL FIELD */}
-            <div className="mb-10">
-                <div className="text-center mb-2">
-                    <label className="text-sm font-semibold text-gray-700">Email</label>
-                </div>
+            {/* ACTION BUTTONS */}
+            <div className="flex justify-end gap-3 mt-12">
+                <button
+                    type="button"
+                    className="px-5 py-2 rounded-full bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200"
+                >
+                    Reset
+                </button>
 
-                <div className="border border-gray-300 rounded-3xl px-6 py-4 bg-gray-100">
-                    <input
-                    type="text"
-                    value={"user@example.com"}  // will populate later
-                    disabled
-                    className="w-full text-lg font-semibold text-gray-500 focus:outline-none bg-gray-100 cursor-not-allowed"
-                    />
-                </div>
+                <button
+                    type="button"
+                    className="px-6 py-2 rounded-full bg-[#e15c31] text-white hover:bg-[#ff9573]"
+                >
+                    Save
+                </button>
             </div>
         </div>
       </main>
