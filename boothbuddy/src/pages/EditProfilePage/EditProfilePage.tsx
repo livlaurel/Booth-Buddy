@@ -27,6 +27,26 @@ export default function EditProfilePage() {
                 <input type="file" accept="image/*" className="hidden" />
             </label>
             </div>
+
+            {/* USERNAME FIELD */}
+            <div className="mb-10">
+            <div className="text-center mb-2">
+                <label className="text-sm font-semibold text-gray-700">Username</label>
+            </div>
+
+            <div className="border border-gray-300 rounded-3xl px-6 py-4">
+                <input
+                type="text"
+                value={"abcde"}  // will make dynamic later
+                onChange={() => {}}
+                className="w-full text-lg font-semibold focus:outline-none"
+                />
+            </div>
+
+            <p className="text-gray-500 text-xs mt-1">
+                www.boothbuddy.com/abcde
+            </p>
+            </div>
         </div>
       </main>
 
