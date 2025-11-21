@@ -16,36 +16,51 @@ export default function EditProfilePage() {
 
             {/* PROFILE PHOTO SECTION */}
             <div className="flex items-center gap-6 mb-10">
-            <img
-                src="/default-avatarr.jpg"
-                alt="Profile avatar"
-                className="w-20 h-20 rounded-full object-cover bg-gray-200 border border-gray-300"
-            />
+                <img
+                    src="/default-avatarr.jpg"
+                    alt="Profile avatar"
+                    className="w-20 h-20 rounded-full object-cover bg-gray-200 border border-gray-300"
+                />
 
-            <label className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 border border-gray-300 cursor-pointer hover:bg-gray-200">
-                Change
-                <input type="file" accept="image/*" className="hidden" />
-            </label>
+                <label className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 border border-gray-300 cursor-pointer hover:bg-gray-200">
+                    Change
+                    <input type="file" accept="image/*" className="hidden" />
+                </label>
             </div>
 
             {/* USERNAME FIELD */}
             <div className="mb-10">
-            <div className="text-center mb-2">
-                <label className="text-sm font-semibold text-gray-700">Username</label>
-            </div>
+                <div className="text-center mb-2">
+                    <label className="text-sm font-semibold text-gray-700">Username</label>
+                </div>
 
-            <div className="border border-gray-300 rounded-3xl px-6 py-4">
-                <input
-                type="text"
-                value={"abcde"}  // will make dynamic later
-                onChange={() => {}}
-                className="w-full text-lg font-semibold focus:outline-none"
-                />
-            </div>
+                <div className="border border-gray-300 rounded-3xl px-6 py-4">
+                    <input
+                    type="text"
+                    value={"abcde"}  // will make dynamic later
+                    onChange={() => {}}
+                    className="w-full text-lg font-semibold focus:outline-none"
+                    />
+                </div>
 
-            <p className="text-gray-500 text-xs mt-1">
-                www.boothbuddy.com/abcde
-            </p>
+                <p className="text-gray-500 text-xs mt-1">
+                    www.boothbuddy.com/abcde
+                </p>
+            </div>
+            {/* EMAIL FIELD */}
+            <div className="mb-10">
+                <div className="text-center mb-2">
+                    <label className="text-sm font-semibold text-gray-700">Email</label>
+                </div>
+
+                <div className="border border-gray-300 rounded-3xl px-6 py-4 bg-gray-100">
+                    <input
+                    type="text"
+                    value={"user@example.com"}  // will populate later
+                    disabled
+                    className="w-full text-lg font-semibold text-gray-500 focus:outline-none bg-gray-100 cursor-not-allowed"
+                    />
+                </div>
             </div>
         </div>
       </main>
