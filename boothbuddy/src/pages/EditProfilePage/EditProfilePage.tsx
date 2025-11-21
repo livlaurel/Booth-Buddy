@@ -13,6 +13,20 @@ export default function EditProfilePage() {
             <p className="text-gray-600 mt-1 mb-8">
             Keep your personal details private.
             </p>
+
+            {/* PROFILE PHOTO SECTION */}
+            <div className="flex items-center gap-6 mb-10">
+            <img
+                src="/default-avatarr.jpg"
+                alt="Profile avatar"
+                className="w-20 h-20 rounded-full object-cover bg-gray-200 border border-gray-300"
+            />
+
+            <label className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 border border-gray-300 cursor-pointer hover:bg-gray-200">
+                Change
+                <input type="file" accept="image/*" className="hidden" />
+            </label>
+            </div>
         </div>
       </main>
 
