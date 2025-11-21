@@ -1,7 +1,9 @@
+import { useState } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 
 export default function ProfilePage() {
+  const [selectedStrip, setSelectedStrip] = useState<any>(null);
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -58,6 +60,7 @@ export default function ProfilePage() {
             {[1, 2, 3, 4, 5, 6].map((id) => (
               <div
                 key={id}
+                onClick={() => setSelectedStrip({ id, url: "/placeholderr-strip.png" })}
                 className="bg-white shadow-md rounded-2xl border border-gray-200 hover:shadow-xl hover:-translate-y-0.5 transition p-2 cursor-pointer"
               >
                 <div className="w-full h-40 overflow-hidden rounded-xl bg-gray-50">
@@ -74,6 +77,50 @@ export default function ProfilePage() {
       </main>
 
       <Footer />
+      {/* MODAL – full strip view */}
+      {selectedStrip && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-xs w-full space-y-3">
+
+            {/* Full strip image */}
+            <div className="max-h-[70vh] overflow-auto flex justify-center">
+              <img
+                src={selectedStrip.url}
+                alt="Full strip"
+                className="rounded-lg max-h-[70vh] w-auto mx-auto object-contain"
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 mt-2">
+              <button
+                type="button"
+                className="flex-1 py-2 rounded-full bg-[#e15c31] text-white text-sm font-medium hover:bg-[#ff9573]"
+                onClick={() => window.open(selectedStrip.url, "_blank")}
+              >
+                Download
+              </button>
+
+              <button
+                type="button"
+                className="flex-1 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                onClick={() => alert("Delete strip – backend coming soon")}
+              >
+                Delete
+              </button>
+            </div>
+
+            {/* Close */}
+            <button
+              type="button"
+              className="w-full mt-1 text-sm text-gray-500 underline"
+              onClick={() => setSelectedStrip(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
