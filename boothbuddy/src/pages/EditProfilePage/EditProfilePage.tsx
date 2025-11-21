@@ -38,7 +38,7 @@ export default function EditProfilePage() {
             {/* PROFILE PHOTO SECTION */}
             <div className="flex items-center gap-6 mb-10">
                 <img
-                    src="/default-avatarr.jpg"
+                    src={photoPreview}
                     alt="Profile avatar"
                     className="w-20 h-20 rounded-full object-cover bg-gray-200 border border-gray-300"
                 />
@@ -57,7 +57,7 @@ export default function EditProfilePage() {
                 <div className="border border-gray-300 rounded-3xl px-6 py-4 bg-gray-100">
                     <input
                     type="text"
-                    value={"user@example.com"}  // will populate later
+                    value={email}  
                     disabled
                     className="w-full text-lg font-semibold text-gray-500 focus:outline-none bg-gray-100 cursor-not-allowed"
                     />
@@ -73,14 +73,14 @@ export default function EditProfilePage() {
                 <div className="border border-gray-300 rounded-3xl px-6 py-4">
                     <input
                     type="text"
-                    value={"abcde"}  // will make dynamic later
-                    onChange={() => {}}
+                    value={username}  
+                    onChange={(e) => setUsername(e.target.value)}
                     className="w-full text-lg font-semibold focus:outline-none"
                     />
                 </div>
 
                 <p className="text-gray-500 text-xs mt-2">
-                    www.boothbuddy.com/abcde
+                    www.boothbuddy.com/{username}
                 </p>
             </div>
             {/* ACTION BUTTONS */}
