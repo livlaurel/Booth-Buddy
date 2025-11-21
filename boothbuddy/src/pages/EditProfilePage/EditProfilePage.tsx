@@ -121,9 +121,14 @@ export default function EditProfilePage() {
                 <button
                     type="button"
                     onClick={handleSave}
-                    className="px-6 py-2 rounded-full bg-[#e15c31] text-white hover:bg-[#ff9573]"
+                    disabled={saving}
+                    className={`px-6 py-2 rounded-full text-white ${
+                        saving
+                        ? "bg-orange-300 cursor-not-allowed"
+                        : "bg-[#e15c31] hover:bg-[#ff9573]"
+                    }`}
                 >
-                    Save
+                   {saving ? "Saving..." : "Save"}
                 </button>
             </div>
         </div>
