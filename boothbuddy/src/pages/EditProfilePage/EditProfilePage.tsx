@@ -1,7 +1,28 @@
+import { useState, useEffect } from "react";
+import { auth } from "../../firebaseConfig";
 import Header from "../../components/header";
 import Footer from "../../components/footer";
 
+
 export default function EditProfilePage() {
+
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [photoPreview, setPhotoPreview] = useState("/default-avatarr.jpg");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const user = auth.currentUser;
+
+        if (user) {
+            setUsername(user.displayName || "");
+            setEmail(user.email || "");
+            setPhotoPreview(user.photoURL || "/default-avatarr.jpg");
+        }
+
+        setLoading(false);
+    }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
