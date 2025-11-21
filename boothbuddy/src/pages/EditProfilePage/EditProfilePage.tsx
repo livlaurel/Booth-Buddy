@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth } from "../../firebaseConfig";
+import { updateProfile } from "firebase/auth";
 import Header from "../../components/header";
 import Footer from "../../components/footer";
 
@@ -9,6 +10,8 @@ export default function EditProfilePage() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [photoPreview, setPhotoPreview] = useState("/default-avatarr.jpg");
+    const [saving, setSaving] = useState(false);
+
     useEffect(() => {
         const user = auth.currentUser;
 
@@ -20,9 +23,30 @@ export default function EditProfilePage() {
 
     }, []);
 
-    const handleSave = () => {
-        console.log("Saving profile changes...");
-        // Saving logic to be added
+    const handleSave = async () => {
+        if (!auth.currentUser) return;
+
+        // Basic validation
+        if (!username.trim()) {
+            console.log("Username cannot be empty");
+            return;
+        }
+
+        try {
+            setSaving(true);
+
+            // Update Firebase Auth displayName
+            await updateProfile(auth.currentUser, {
+            displayName: username,
+            });
+
+            console.log("Username updated successfully!");
+
+        } catch (error) {
+            console.error("Error updating username:", error);
+        } finally {
+            setSaving(false);
+        }
     };
 
   return (
