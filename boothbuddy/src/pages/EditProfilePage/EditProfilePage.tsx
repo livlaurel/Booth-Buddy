@@ -58,12 +58,12 @@ export default function EditProfilePage() {
                     />
                 </div>
 
-                <p className="text-gray-500 text-xs mt-1">
+                <p className="text-gray-500 text-xs mt-2">
                     www.boothbuddy.com/abcde
                 </p>
             </div>
             {/* ACTION BUTTONS */}
-            <div className="flex justify-end gap-3 mt-12">
+            <div className="flex justify-end gap-3 mt-18">
                 <button
                     type="button"
                     className="px-5 py-2 rounded-full bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200"
