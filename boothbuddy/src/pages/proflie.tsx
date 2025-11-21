@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
+import { Link } from "react-router-dom";
 
 export default function ProfilePage() {
   const [selectedStrip, setSelectedStrip] = useState<any>(null);
@@ -34,12 +35,12 @@ export default function ProfilePage() {
               Share Profile
             </button>
 
-            <button
-              type="button"
+            <Link
+              to="/edit-profile"
               className="px-4 py-2 rounded-full bg-[#e15c31] text-white text-sm font-medium hover:bg-[#ff9573]"
             >
               Edit Profile
-            </button>
+            </Link>
           </div>
         </section>
         {/* MY STRIPS TAB */}
