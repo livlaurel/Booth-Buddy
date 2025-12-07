@@ -2,11 +2,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
-import Download from "./pages/download.tsx"
-import Booth from "./pages/photobooth.tsx"
-import Profile from "./pages/proflie.tsx"
+import Download from "./pages/download.tsx";
+import Booth from "./pages/photobooth.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
-import './App.css'
+import "./App.css";
 
 function App() {
   return (
@@ -17,12 +17,11 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/booth" element={<Booth />} />
         <Route path="/download" element={<Download />} />
-        <Route path="/profile" element={<Profile/>}/>
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
     </Router>
   );
-
 }
 
 export default App;

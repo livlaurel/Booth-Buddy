@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect} from "react";
+import { auth } from "../firebaseConfig";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import WebcamCapture from "../components/WebcamCapture";
@@ -21,6 +22,7 @@ function Booth() {
   const [filterIntensity, setFilterIntensity] = useState<number>(1.0);
   const [isApplyingFilter, setIsApplyingFilter] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
 
   // NEW: store photos for right-side strip
@@ -103,6 +105,47 @@ function Booth() {
 
     return () => clearTimeout(timeout);
   }, [selectedFilter, filterIntensity]);
+
+  const savePhotos = async () => {
+    if (stripPhotos.length === 0) {
+      alert("No photos to save!");
+      return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Please sign in to save photos!");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/photos/save`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user.uid,
+            photos: stripPhotos,
+            filterType: selectedFilter,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        alert("Photos saved successfully! ✅");
+      } else {
+        throw new Error(data.error?.message || "Failed to save photos");
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to save photos");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const createStrip = async () => {
     // Logic for creating strip
@@ -249,6 +292,19 @@ function Booth() {
               resetPhotos={resetPhotos}
               isGuest={isGuest}
             />
+            
+            {/* Save Photos Button */}
+            {stripPhotos.length > 0 && !isGuest && (
+              <button
+                onClick={savePhotos}
+                disabled={isSaving}
+                className={`mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 border-4 border-black rounded shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-colors ${
+                  isSaving ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {isSaving ? "Saving..." : "💾 Save Photos"}
+              </button>
+            )}
           </div>
         </div>
       </main>
