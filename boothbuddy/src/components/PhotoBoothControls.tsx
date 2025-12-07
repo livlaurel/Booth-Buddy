@@ -54,29 +54,11 @@ const PhotoBoothControls: React.FC<PhotoBoothControlsProps> = ({
           className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
         >
           <option value="none">No Filter</option>
-          {isGuest
-      ? (
-          // Guests: can pick grayscale
-          <option key="grayscale" value="grayscale">Grayscale</option>
-        )
-      : (
-          // Logged-in: show all filters
-          filters.map((filter) => (
+          {filters.map((filter) => (
             <option key={filter.id} value={filter.id}>
               {filter.name} - {filter.description}
             </option>
-          ))
-        )
-    }
-
-    {isGuest &&
-      filters
-        .filter((f) => f.id !== "grayscale")
-        .map((filter) => (
-          <option key={filter.id} value={filter.id} disabled>
-            {filter.name} - Sign up to unlock
-          </option>
-        ))}
+          ))}
         </select>
       </div>
 
@@ -112,20 +94,28 @@ const PhotoBoothControls: React.FC<PhotoBoothControlsProps> = ({
         </button>
       )}
 
-      <div className="mt-4 flex gap-4">
-        <button
-          onClick={createStrip}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          <FaDownload />
-        </button>
-        <button
-          onClick={resetPhotos}
-          className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-500"
-        >
-          Reset
-        </button>
-      </div>
+      {!isGuest && (
+        <div className="mt-4 flex gap-4">
+          <button
+            onClick={createStrip}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            <FaDownload />
+          </button>
+          <button
+            onClick={resetPhotos}
+            className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-500"
+          >
+            Reset
+          </button>
+        </div>
+      )}
+
+      {isGuest && (
+        <p className="text-center text-gray-500 mt-2">
+          Please <a href="/signup" className="text-blue-600 hover:underline">sign up</a> to create or download strips.
+        </p>
+      )}
     </div>
   );
 };
