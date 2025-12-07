@@ -113,7 +113,7 @@ const PhotoBoothControls: React.FC<PhotoBoothControlsProps> = ({
 
       {isGuest && (
         <p className="text-center text-gray-500 mt-2">
-          Please <a href="/signup" className="text-blue-600 hover:underline">sign up</a> to create or download strips.
+          Please <a href="/signup" className="text-blue-600 hover:underline">sign up</a> to download photos!
         </p>
       )}
     </div>
