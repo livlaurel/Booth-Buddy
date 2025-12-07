@@ -1,0 +1,18 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WebcamCapture Component > Snapshots > should match snapshot of initial render 1`] = `
+<div>
+  <div
+    class="relative flex flex-col items-center space-y-4 p-4"
+  >
+    <video
+      autoplay=""
+      class="rounded shadow-md w-full max-w-md transform scale-x-[-1]"
+      playsinline=""
+    />
+    <canvas
+      class="hidden"
+    />
+  </div>
+</div>
+`;

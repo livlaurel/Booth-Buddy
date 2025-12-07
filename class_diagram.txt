@@ -1,0 +1,117 @@
++---------------------+       uses       +---------------------+
+|  App                | <-------------- |  LandingPage        |
++---------------------+                  +---------------------+
+| - Routes            |                  |                     |
+|                     |                  | + handleGuestLogin()|
+| + render()          |                  | + navigate()        |
++---------------------+                  +---------------------+
+       |
+       | contains
+       v
++---------------------+       contains       +---------------------+       uses       +---------------------+
+|  Booth              | ------------------> |  WebcamCapture      | <-------------- |  PhotoBoothControls |
++---------------------+                      +---------------------+                  +---------------------+
+| - coinInserted      |                      | - videoRef          |                  | - filters           |
+| - webcamRef         |                      | - canvasRef         |                  | - selectedFilter    |
+| - stripPhotos       |                      | - capturedImages    |                  | - filterIntensity   |
+| - filters           |                      | - countdown         |                  |                     |
+| - selectedFilter    |                      | - flash             |                  | + setFilter()       |
+| - filterIntensity   |                      |                     |                  | + resetPhotos()     |
+|                     |                      | + startCapture()    |                  | + applyFilter()     |
+| + handleInsertCoin()|                      | + applyFilter()     |                  | + createStrip()     |
+| + handlePhotosUpdate|                      +---------------------+                  +---------------------+
+| + createStrip()     |
++---------------------+
+       |
+       | uses
+       v
++---------------------+
+|  Filter             |
++---------------------+
+| - id                |
+| - name              |
+| - description       |
+| - defaultIntensity  |
+| - minIntensity      |
+| - maxIntensity      |
++---------------------+
+
+App
+Description: The main entry point of the application. It sets up the routing for the entire app.
+Attributes:
+- Routes: Defines the routes for different pages in the app.
+Methods:
++ render(): Renders the application and its routes.
+Relationships:
+Uses: LandingPage (as one of the routes).
+Contains: Booth and other components/pages as part of the routing.
+LandingPage
+Description: Represents the landing page of the application, where users can log in, sign up, or proceed as a guest.
+Methods:
++ handleGuestLogin(): Handles guest login functionality.
++ navigate(): Navigates to other pages (e.g., login, signup).
+Relationships:
+Used by: App.
+Booth
+Description: The main photo booth page where users interact with the webcam, apply filters, and create photo strips.
+Attributes:
+- coinInserted: Tracks whether a coin has been inserted (to simulate a real photo booth).
+- webcamRef: A reference to the WebcamCapture component.
+- stripPhotos: Stores the photos captured for the photo strip.
+- filters: A list of available filters.
+- selectedFilter: The currently selected filter.
+- filterIntensity: The intensity of the selected filter.
+Methods:
++ handleInsertCoin(): Handles the coin insertion logic.
++ handlePhotosUpdate(): Updates the photos captured by the webcam.
++ createStrip(): Creates the final photo strip.
+Relationships:
+Contains: WebcamCapture and PhotoBoothControls.
+Uses: Filter.
+WebcamCapture
+Description: Handles the webcam functionality, including capturing photos and applying effects like countdown and flash.
+Attributes:
+- videoRef: A reference to the video element for the webcam.
+- canvasRef: A reference to the canvas element for capturing images.
+- capturedImages: Stores the images captured by the webcam.
+- countdown: Tracks the countdown timer for photo capture.
+- flash: Indicates whether the flash effect is active.
+Methods:
++ startCapture(): Starts the photo capture process.
++ applyFilter(): Applies a filter to the captured images.
+Relationships:
+Contained by: Booth.
+Uses: PhotoBoothControls.
+PhotoBoothControls
+Description: Provides controls for applying filters, resetting photos, and creating photo strips.
+Attributes:
+- filters: A list of available filters.
+- selectedFilter: The currently selected filter.
+- filterIntensity: The intensity of the selected filter.
+Methods:
++ setFilter(): Sets the selected filter.
++ resetPhotos(): Resets the captured photos.
++ applyFilter(): Applies the selected filter to the photos.
++ createStrip(): Creates the final photo strip.
+Relationships:
+Used by: WebcamCapture.
+Uses: Filter.
+Filter
+Description: Represents a filter that can be applied to photos.
+Attributes:
+- id: A unique identifier for the filter.
+- name: The name of the filter.
+- description: A description of the filter.
+- defaultIntensity: The default intensity of the filter.
+- minIntensity: The minimum intensity value for the filter.
+- maxIntensity: The maximum intensity value for the filter.
+Relationships:
+Used by: Booth and PhotoBoothControls.
+Relationships Summary:
+App → LandingPage: App uses LandingPage as one of its routes.
+App → Booth: App contains Booth as part of its routing.
+Booth → WebcamCapture: Booth contains WebcamCapture for webcam functionality.
+Booth → PhotoBoothControls: Booth contains PhotoBoothControls for managing filters and photo strips.
+WebcamCapture → PhotoBoothControls: WebcamCapture uses PhotoBoothControls to apply filters.
+Booth → Filter: Booth uses Filter to manage available filters.
+PhotoBoothControls → Filter: PhotoBoothControls uses Filter to apply effects to photos.
