@@ -18,6 +18,8 @@ export default function ProfilePage() {
   const [strips, setStrips] = useState<Strip[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,12 +63,9 @@ export default function ProfilePage() {
         setStrips(strips.filter((s) => s.storage_path !== storagePath));
         setSelectedStrip(null);
         alert("Strip deleted successfully!");
-      } else {
-        alert("Failed to delete strip");
       }
     } catch (error) {
       console.error("Error deleting strip:", error);
-      alert("Failed to delete strip");
     }
   };
 
@@ -80,134 +79,130 @@ export default function ProfilePage() {
     document.body.removeChild(link);
   };
 
-  if (!user) {
-    return null;
-  }
+  const handleShare = () => {
+    const profileUrl = window.location.href;
+    navigator.clipboard.writeText(profileUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const getMemberSince = () => {
+    if (!user?.metadata?.creationTime) return "Recently";
+    const date = new Date(user.metadata.creationTime);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  const getLastActive = () => {
+    if (!user?.metadata?.lastSignInTime) return "Recently";
+    const date = new Date(user.metadata.lastSignInTime);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 5) return "Just now";
+    if (diffMins < 60) return `${diffMins} minutes ago`;
+    return "Recently";
+  };
+
+  if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-
       <main className="flex-1 px-4 sm:px-8 lg:px-16 pb-12">
-        <section className="flex flex-col items-center text-center pt-10 pb-8 border-b border-gray-200">
-          <img
-            src={user.photoURL || "/default-avatarr.jpg"}
-            alt="Profile avatar"
-            className="w-28 h-28 rounded-full object-cover border-4 border-orange-400 shadow-md"
-          />
+        <section className="flex flex-col items-center text-center pt-10 pb-8 border-b border-gray-200 bg-white mt-8 rounded-2xl shadow-sm">
+          <div className="relative mb-4 group">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 blur-md opacity-75 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative bg-white rounded-full p-1">
+              <img src={user.photoURL || "/default-avatarr.jpg"} alt="Profile" className="w-28 h-28 rounded-full object-cover border-4 border-white" />
+            </div>
+          </div>
 
-          <h1 className="mt-4 text-3xl sm:text-4xl font-black">
-            {user.displayName || "User"}
-          </h1>
+          <h1 className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">{user.displayName || "User"}</h1>
+          <p className="mt-1 text-sm text-gray-500">{user.email}</p>
 
-          <p className="mt-1 text-sm sm:text-base text-gray-500">
-            {user.email}
-          </p>
+          <div className="mt-4 flex gap-6 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <span>📅</span>
+              <span>Member since {getMemberSince()}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>🕐</span>
+              <span>Active {getLastActive()}</span>
+            </div>
+          </div>
 
-          <div className="mt-4 flex gap-3">
-            <button
-              type="button"
-              className="px-4 py-2 rounded-full border border-gray-300 text-sm font-medium hover:bg-gray-100"
-              onClick={() => alert("Share feature coming soon!")}
-            >
-              Share Profile
+          <div className="mt-6 flex gap-3">
+            <button onClick={() => setShowShareModal(true)} className="px-4 py-2 rounded-full border-2 border-gray-300 text-sm font-medium hover:bg-gray-50 transition-all hover:scale-105">
+              🔗 Share Profile
             </button>
-
-            <Link
-              to="/edit-profile"
-              className="px-4 py-2 rounded-full bg-[#e15c31] text-white text-sm font-medium hover:bg-[#ff9573]"
-            >
+            <Link to="/edit-profile" className="px-4 py-2 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white text-sm font-medium hover:shadow-lg transition-all hover:scale-105">
               Edit Profile
             </Link>
           </div>
         </section>
 
-        <section className="mt-4 flex justify-center">
-          <div className="inline-flex gap-6 border-b border-gray-200">
-            <button
-              type="button"
-              className="pb-2 text-sm sm:text-base font-medium text-black border-b-2 border-black"
-            >
-              My Strips ({strips.length})
-            </button>
-          </div>
-        </section>
-
         <section className="mt-8">
+          <h2 className="text-2xl font-bold mb-6 text-center">Your Photo Strips ({strips.length})</h2>
+          
           {loading ? (
-            <p className="text-center text-gray-500">Loading your strips...</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              {[1,2,3,4,5,6,7,8].map(i => (
+                <div key={i} className="animate-pulse bg-gray-200 rounded-2xl h-48"></div>
+              ))}
+            </div>
           ) : strips.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">You haven't created any photo strips yet!</p>
-              <Link
-                to="/booth"
-                className="inline-block px-6 py-3 rounded-full bg-[#e15c31] text-white font-medium hover:bg-[#ff9573]"
-              >
-                Create Your First Strip
+            <div className="text-center py-16">
+              <div className="text-8xl mb-4">📷</div>
+              <h3 className="text-xl font-bold mb-2">No Strips Yet!</h3>
+              <p className="text-gray-500 mb-6">Create your first photo strip</p>
+              <Link to="/booth" className="inline-block px-8 py-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold hover:shadow-xl transition-all hover:scale-105">
+                Create Strip
               </Link>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-              {strips.map((strip) => (
-                <div
-                  key={strip.id}
-                  onClick={() => setSelectedStrip(strip)}
-                  className="bg-white shadow-md rounded-2xl border border-gray-200 hover:shadow-xl hover:-translate-y-0.5 transition p-2 cursor-pointer"
-                >
-                  <div className="w-full h-40 overflow-hidden rounded-xl bg-gray-50">
-                    <img
-                      src={strip.public_url}
-                      alt="Strip preview"
-                      className="w-full h-full object-cover object-top"
-                    />
+              {strips.map((strip, i) => (
+                <div key={strip.id} className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all hover:-translate-y-2 p-2" style={{animation: `fade-in 0.5s ${i*50}ms backwards`}}>
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center gap-2 z-10">
+                    <button onClick={() => handleDownload(strip.public_url, strip.filename)} className="bg-white px-3 py-2 rounded-full text-xs font-bold hover:scale-110 transition">⬇️</button>
+                    <button onClick={() => setSelectedStrip(strip)} className="bg-white px-3 py-2 rounded-full text-xs font-bold hover:scale-110 transition">👁️</button>
+                    <button onClick={() => handleDelete(strip.storage_path)} className="bg-red-500 text-white px-3 py-2 rounded-full text-xs font-bold hover:scale-110 transition">🗑️</button>
                   </div>
-                  <p className="mt-2 text-xs text-gray-500 text-center">
-                    {new Date(strip.created_at).toLocaleDateString()}
-                  </p>
+                  <img src={strip.public_url} alt="Strip" className="w-full h-40 object-cover rounded-xl group-hover:scale-110 transition" />
+                  <p className="text-xs text-gray-500 text-center mt-2">{new Date(strip.created_at).toLocaleDateString()}</p>
                 </div>
               ))}
             </div>
           )}
         </section>
       </main>
-
       <Footer />
 
+      {showShareModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowShareModal(false)}>
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">Share Profile</h3>
+            <div className="flex items-center gap-2 p-3 bg-gray-100 rounded-lg mb-4">
+              <input type="text" value={window.location.href} readOnly className="flex-1 bg-transparent text-sm outline-none" />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={handleShare} className="flex-1 py-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold">{copied ? "✓ Copied!" : "Copy Link"}</button>
+              <button onClick={() => setShowShareModal(false)} className="flex-1 py-3 rounded-full border-2 border-gray-300 font-bold">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {selectedStrip && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-xs w-full space-y-3">
-            <div className="max-h-[70vh] overflow-auto flex justify-center">
-              <img
-                src={selectedStrip.public_url}
-                alt="Full strip"
-                className="rounded-lg max-h-[70vh] w-auto mx-auto object-contain"
-              />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={() => setSelectedStrip(null)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md mx-4" onClick={e => e.stopPropagation()}>
+            <img src={selectedStrip.public_url} alt="Strip" className="rounded-xl max-h-[70vh] mx-auto" />
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => handleDownload(selectedStrip.public_url, selectedStrip.filename)} className="flex-1 py-3 rounded-full bg-green-500 text-white font-bold">Download</button>
+              <button onClick={() => handleDelete(selectedStrip.storage_path)} className="flex-1 py-3 rounded-full bg-red-500 text-white font-bold">Delete</button>
             </div>
-
-            <div className="flex gap-3 mt-2">
-              <button
-                onClick={() => handleDownload(selectedStrip.public_url, selectedStrip.filename)}
-                className="flex-1 py-2 rounded-full bg-[#e15c31] text-white text-sm font-medium hover:bg-[#ff9573]"
-              >
-                Download
-              </button>
-
-              <button
-                type="button"
-                className="flex-1 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-100"
-                onClick={() => handleDelete(selectedStrip.storage_path)}
-              >
-                Delete
-              </button>
-            </div>
-
-            <button
-              type="button"
-              className="w-full mt-1 text-sm text-gray-500 underline"
-              onClick={() => setSelectedStrip(null)}
-            >
-              Close
-            </button>
+            <button onClick={() => setSelectedStrip(null)} className="w-full py-3 rounded-full border-2 mt-3 font-bold">Close</button>
           </div>
         </div>
       )}
