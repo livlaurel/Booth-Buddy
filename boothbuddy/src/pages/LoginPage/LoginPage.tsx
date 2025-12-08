@@ -136,7 +136,7 @@ export default function LoginPage() {
                           <span>Logging in...</span>
                         </div>
                       ) : (
-                        "LOGIN"
+                        "Login"
                       )}
                   </button>
               </form>
