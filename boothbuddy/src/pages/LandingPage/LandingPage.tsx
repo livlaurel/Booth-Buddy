@@ -1,6 +1,6 @@
 import Header from "../../components/header";
 import Footer from "../../components/footer"
-import Booth from "../../imgs/homebooth.png"
+import Booth from "../../imgs/homebooth.jpeg"
 import { useNavigate } from "react-router-dom";
 import { signInAnonymously } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
@@ -29,7 +29,7 @@ export default function LandingPage() {
           <img
             src={Booth}
             alt="Booth Buddy"
-            className="fixed top-8 inset-x-0 mx-auto w-190 h-165"
+            className="fixed top-8 inset-x-0 mx-auto w-175 h-170"
           />
           {/* Login + Signup buttons */}
           <div className="fixed top-107 left-78 inset-x-0 flex flex-row items-center justify-center space-x-4">
