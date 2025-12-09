@@ -298,7 +298,7 @@ function Booth() {
               <button
                 onClick={savePhotos}
                 disabled={isSaving}
-                className={`mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 border-4 border-black rounded transition-colors ${
+                className={`mt-4 w-full bg-blue-800 hover:bg-blue-950 text-white py-3 px-6 rounded transition-colors ${
                   isSaving ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
