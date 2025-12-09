@@ -231,10 +231,10 @@ const ProfilePage: React.FC = () => {
         <div className="bg-white border-3 border-stone-300 rounded-lg p-8">
           <div className="flex justify-between items-center mb-6">
             {/* Tabs */}
-            <div className="flex gap-2 border-4 border-black rounded-lg overflow-hidden">
+            <div className="flex border-4 border-black rounded-lg overflow-hidden">
               <button
                 onClick={() => setActiveTab("strips")}
-                className={`px-6 py-3 font-bold transition-colors ${
+                className={`px-6 py-3 transition-colors ${
                   activeTab === "strips" 
                     ? "bg-black text-white" 
                     : "bg-white text-black hover:bg-gray-100"
@@ -244,7 +244,7 @@ const ProfilePage: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab("favorites")}
-                className={`px-6 py-3 font-bold transition-colors border-l-4 border-black ${
+                className={`px-6 py-3 transition-colors border-l-4 border-black ${
                   activeTab === "favorites" 
                     ? "bg-black text-white" 
                     : "bg-white text-black hover:bg-gray-100"
@@ -254,7 +254,7 @@ const ProfilePage: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab("settings")}
-                className={`px-6 py-3 font-bold transition-colors border-l-4 border-black ${
+                className={`px-6 py-3 transition-colors border-l-4 border-black ${
                   activeTab === "settings" 
                     ? "bg-black text-white" 
                     : "bg-white text-black hover:bg-gray-100"
@@ -266,7 +266,7 @@ const ProfilePage: React.FC = () => {
 
             {/* Grid Size Toggle */}
             {activeTab !== "settings" && (
-              <div className="flex gap-2 border-4 border-black rounded-lg overflow-hidden">
+              <div className="flex border-4 border-black rounded-lg overflow-hidden">
                 <button
                   onClick={() => setGridSize("small")}
                   className={`px-4 py-2 font-bold transition-colors ${
