@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/header";
 
 type UserProfile = {
   displayName: string | null;
@@ -186,69 +187,54 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-white p-4">
+      <div className="mb-10" >
+        <Header />
+      </div>
       <div className="max-w-6xl mx-auto w-full mt-8">
         {/* Profile Header */}
-        <div className="bg-white border-4 border-black rounded-lg shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-8">
-          <h1 className="text-3xl font-bold mb-6 text-center">Your Profile</h1>
+        <div className="bg-white border-b-3 border-stone-300 p-8 mb-8">
 
           <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-            {/* Avatar with Bold Border */}
-            <div className="relative flex-shrink-0">
-              {user.photoURL ? (
-                <img src={user.photoURL} alt="Profile" className="w-32 h-32 rounded-full object-cover border-4 border-black" />
-              ) : (
-                <div className="w-32 h-32 rounded-full bg-gray-200 border-4 border-black flex items-center justify-center">
-                  <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              )}
-            </div>
-
             <div className="flex-grow w-full space-y-4">
-              <div className="bg-gray-50 border-2 border-black rounded p-4">
-                <p className="text-sm font-semibold text-gray-600 mb-1">NAME</p>
-                <p className="text-lg font-bold">{user.displayName || "Unnamed user"}</p>
+              <div className="rounded">
+                <p className="text-4xl underline font-bold">{user.displayName || "Unnamed user"}</p>
+                <p className="mt-2 text-m break-all">{user.email}</p>
               </div>
-              <div className="bg-gray-50 border-2 border-black rounded p-4">
-                <p className="text-sm font-semibold text-gray-600 mb-1">EMAIL</p>
-                <p className="text-lg font-bold break-all">{user.email}</p>
+
+              <div className="flex flex-row justify-center space-x-3 flex-shrink-0">
+                <button
+                  onClick={() => setShowShareModal(true)}
+                  className="text-black py-3 px-6 border-3 bg-white px-4 py-2 rounded-full hover:bg-stone-200 whitespace-nowrap"
+                >
+                  Share Profile
+                </button>
+    
+                <button
+                  onClick={() => navigate("/booth")}
+                  className="text-black py-3 px-6 border-3 bg-white px-4 py-2 rounded-full hover:bg-stone-200 whitespace-nowrap"
+                >
+                  Go to Photo Booth
+                </button>
+    
+                <button
+                  onClick={handleSignOut}
+                  className="text-white py-3 px-6 bg-orange-400 px-4 py-2 rounded-full hover:bg-orange-500 whitespace-nowrap"
+                >
+                  Sign Out
+                </button>
               </div>
-            </div>
-
-            <div className="flex flex-col space-y-3 flex-shrink-0">
-              <button
-                onClick={() => setShowShareModal(true)}
-                className="bg-white text-black font-bold py-3 px-6 border-4 border-black rounded hover:bg-gray-100 transition-colors whitespace-nowrap"
-              >
-                Share Profile
-              </button>
-              
-              <button
-                onClick={() => navigate("/booth")}
-                className="bg-white text-black font-bold py-3 px-6 border-4 border-black rounded hover:bg-gray-100 transition-colors whitespace-nowrap"
-              >
-                Go to Photo Booth
-              </button>
-
-              <button
-                onClick={handleSignOut}
-                className="bg-orange-500 text-white font-bold py-3 px-6 border-4 border-black rounded hover:bg-orange-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap"
-              >
-                Sign Out
-              </button>
             </div>
           </div>
         </div>
 
         {/* Tabs and Controls */}
-        <div className="bg-white border-4 border-black rounded-lg shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
+        <div className="bg-white border-3 border-stone-300 rounded-lg p-8">
           <div className="flex justify-between items-center mb-6">
             {/* Tabs */}
-            <div className="flex gap-2 border-4 border-black rounded-lg overflow-hidden">
+            <div className="flex border-4 border-black rounded-lg overflow-hidden">
               <button
                 onClick={() => setActiveTab("strips")}
-                className={`px-6 py-3 font-bold transition-colors ${
+                className={`px-6 py-3 transition-colors ${
                   activeTab === "strips" 
                     ? "bg-black text-white" 
                     : "bg-white text-black hover:bg-gray-100"
@@ -258,7 +244,7 @@ const ProfilePage: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab("favorites")}
-                className={`px-6 py-3 font-bold transition-colors border-l-4 border-black ${
+                className={`px-6 py-3 transition-colors border-l-4 border-black ${
                   activeTab === "favorites" 
                     ? "bg-black text-white" 
                     : "bg-white text-black hover:bg-gray-100"
@@ -268,7 +254,7 @@ const ProfilePage: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab("settings")}
-                className={`px-6 py-3 font-bold transition-colors border-l-4 border-black ${
+                className={`px-6 py-3 transition-colors border-l-4 border-black ${
                   activeTab === "settings" 
                     ? "bg-black text-white" 
                     : "bg-white text-black hover:bg-gray-100"
@@ -280,7 +266,7 @@ const ProfilePage: React.FC = () => {
 
             {/* Grid Size Toggle */}
             {activeTab !== "settings" && (
-              <div className="flex gap-2 border-4 border-black rounded-lg overflow-hidden">
+              <div className="flex border-4 border-black rounded-lg overflow-hidden">
                 <button
                   onClick={() => setGridSize("small")}
                   className={`px-4 py-2 font-bold transition-colors ${
@@ -351,7 +337,6 @@ const ProfilePage: React.FC = () => {
             </div>
           ) : displayedStrips.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-6xl mb-4">📷</div>
               <h3 className="text-xl font-bold text-gray-700 mb-2">
                 {activeTab === "favorites" ? "No Favorite Strips Yet!" : "No Photo Strips Yet!"}
               </h3>
@@ -363,7 +348,7 @@ const ProfilePage: React.FC = () => {
               {activeTab === "strips" && (
                 <button
                   onClick={() => navigate("/booth")}
-                  className="px-8 py-3 rounded bg-orange-500 text-white font-bold hover:bg-orange-600 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-colors"
+                  className="px-8 py-3 bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-500"
                 >
                   Create Your First Strip
                 </button>
@@ -441,7 +426,7 @@ const ProfilePage: React.FC = () => {
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowShareModal(false)}>
-          <div className="bg-white rounded-lg border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-lg border-4 border-black p-8 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
             <h3 className="text-2xl font-bold mb-4">Share Your Profile</h3>
             <p className="text-gray-600 mb-6">Share your photo booth profile with friends!</p>
             
@@ -450,10 +435,10 @@ const ProfilePage: React.FC = () => {
             </div>
 
             <div className="flex gap-3">
-              <button onClick={handleShare} className="flex-1 py-3 rounded bg-orange-500 text-white font-bold border-4 border-black hover:bg-orange-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <button onClick={handleShare} className="flex-1 py-3 text-white py-3 px-6 bg-orange-400 px-4 py-2 rounded-full hover:bg-orange-500 whitespace-nowrap">
                 {copied ? "Copied!" : "Copy Link"}
               </button>
-              <button onClick={() => setShowShareModal(false)} className="flex-1 py-3 rounded border-4 border-black font-bold hover:bg-gray-100 transition-colors">
+              <button onClick={() => setShowShareModal(false)} className="flex-1 py-3 text-black border-3 py-3 px-6 bg-white px-4 py-2 rounded-full hover:bg-stone-200 whitespace-nowrap">
                 Close
               </button>
             </div>
@@ -464,17 +449,17 @@ const ProfilePage: React.FC = () => {
       {/* View Strip Modal */}
       {selectedStrip && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={() => setSelectedStrip(null)}>
-          <div className="bg-white rounded-lg border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 max-w-md mx-4" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-lg border-4 border-black p-6 max-w-md mx-4" onClick={e => e.stopPropagation()}>
             <div className="space-y-2 mb-4 max-h-[70vh] overflow-auto">
               {selectedStrip.photos.map((photo, idx) => (
                 <img key={idx} src={photo} alt={`Photo ${idx + 1}`} className="rounded w-full" />
               ))}
             </div>
             <div className="flex gap-3 mb-3">
-              <button onClick={() => downloadStrip(selectedStrip.photos, selectedStrip.id)} className="flex-1 py-3 rounded bg-green-500 text-white font-bold border-4 border-black hover:bg-green-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <button onClick={() => downloadStrip(selectedStrip.photos, selectedStrip.id)} className="flex-1 py-3 rounded bg-green-500 text-white font-bold border-4 border-black hover:bg-green-600 transition-colors">
                 Download
               </button>
-              <button onClick={() => handleDeleteStrip(selectedStrip.id)} className="flex-1 py-3 rounded bg-red-500 text-white font-bold border-4 border-black hover:bg-red-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <button onClick={() => handleDeleteStrip(selectedStrip.id)} className="flex-1 py-3 rounded bg-red-500 text-white font-bold border-4 border-black hover:bg-red-600 transition-colors">
                 Delete
               </button>
             </div>
@@ -489,3 +474,4 @@ const ProfilePage: React.FC = () => {
 };
 
 export default ProfilePage;
+
